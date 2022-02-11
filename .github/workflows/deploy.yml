@@ -1,0 +1,25 @@
+name: CI
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "14"
+      - uses: actions/checkout@v2
+      # Setup key
+      - run: set -eu
+      - run: mkdir "$HOME/.ssh"
+      - run: echo "${{ secrets.DEPLOY_PRIVATE_KEY }}" > "$HOME/.ssh/private_key"
+      - run: chmod 600 "$HOME/.ssh/private_key"
+      # Build
+      - run: npm i
+      - run: npm run build
+      # Deploy
+      - run: cd build && rsync -e "ssh -i $HOME/.ssh/private_key -o StrictHostKeyChecking=no" --archive --compress --delete . ${{ secrets.DEPLOY_SERVER_USER }}@${{ secrets.DEPLOY_SERVER_IP }}:/var/www/vending-machine.not-js.ru/
