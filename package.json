@@ -1,16 +1,16 @@
 {
   "name": "vending_machine",
   "version": "1.0.0",
-  "description": "alexey",
+  "description": "vending_machine",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack serve --config \"./config/webpack/dev.js\"",
     "build": "cross-env NODE_ENV=production webpack --config \"./config/webpack/prod.js\""
   },
-  "author": "",
+  "author": "alexey",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.17.0",
+    "@babel/core": "^7.17.2",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
@@ -35,10 +35,10 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.17.0",
+    "@babel/runtime": "^7.17.2",
     "babel-plugin-styled-components": "^2.0.2",
     "express": "^4.17.2",
-    "framer-motion": "^6.2.4",
+    "framer-motion": "^6.2.6",
     "imagemin-webpack-plugin": "^2.4.2",
     "mobx": "^6.3.13",
     "mobx-react-lite": "^3.2.3",
