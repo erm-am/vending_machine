@@ -21,6 +21,6 @@ export type ShopSelectableProducts = Map<number, ISelectableShopProductDetail>;
 export type MoneyTransaction = {
   from: Wallet; // Откуда забираем
   to: Wallet; // Куда прибавляем
-  payload: Wallet; // Данные для транзакции
+  payload: Wallet; // Данные для "транзакции"
 };
 export type ProductTransaction = { from: ShopProducts; to: UserProducts; payload: ShopSelectableProducts };

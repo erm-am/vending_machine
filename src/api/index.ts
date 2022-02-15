@@ -37,6 +37,9 @@ const shopProductsFakeData: ShopProducts = new Map([
   [4, { qty: 20, price: 10, name: "Конфета" }],
   [5, { qty: 20, price: 10, name: "Pepsi" }],
   [6, { qty: 20, price: 10, name: "Coca-cola" }],
+  [7, { qty: 20, price: 10, name: "Конфета111" }],
+  [8, { qty: 20, price: 10, name: "Pepsi222" }],
+  [9, { qty: 20, price: 10, name: "Coca-cola333" }],
 ]);
 
 const userProductsFakeData: UserProducts = new Map([
@@ -46,6 +49,9 @@ const userProductsFakeData: UserProducts = new Map([
   [4, { qty: 0, name: "Конфета" }],
   [5, { qty: 0, name: "Pepsi" }],
   [6, { qty: 0, name: "Coca-cola" }],
+  [7, { qty: 0, name: "Конфета111" }],
+  [8, { qty: 0, name: "Pepsi222" }],
+  [9, { qty: 0, name: "Coca-cola333" }],
 ]);
 
 export class ApiService {

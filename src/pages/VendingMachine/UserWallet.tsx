@@ -2,48 +2,57 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../hooks/useStore";
 import styled from "styled-components";
-import { Button } from "../../components/Button";
+import { Button } from "../../components/core/Button";
 export const UserWallet: React.FC = observer((props) => {
   const userStore = useStore().shop.userStore;
 
   return (
     <Container>
-      {Array.from(userStore.userWallet).map(([money_id, qty]) => {
-        return (
-          <Money
-            key={money_id}
-            onClick={() => {
-              if (qty > 0) userStore.transferUserMoneyToVendingMachine(money_id);
-            }}
-          >
-            <MoneyCaption>{money_id} руб</MoneyCaption>
-            <MoneyQuantity title="Количество">{qty}</MoneyQuantity>
-          </Money>
-        );
-      })}
-      <Amount>Всего денег: {userStore.totalUserMoney} рублей</Amount>
+      <Title>Деньги пользователя</Title>
+      <Wallet>
+        {Array.from(userStore.userWallet).map(([money_id, qty]) => {
+          return (
+            <Money
+              key={money_id}
+              onClick={() => {
+                if (qty > 0) userStore.transferUserMoneyToVendingMachine(money_id);
+              }}
+            >
+              <MoneyCaption>{money_id} руб</MoneyCaption>
+              <MoneyQuantity title="Количество">{qty}</MoneyQuantity>
+            </Money>
+          );
+        })}
+      </Wallet>
     </Container>
   );
 });
 
 const Container = styled.div`
   display: flex;
-  flex-direction: row;
-  padding: 20px;
-  justify-content: space-evenly;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  color: white;
+  flex-direction: column;
+
+  flex: 1;
+  height: 100%;
 `;
 const Title = styled.h4`
-  text-align: center;
+  padding: 5px;
 `;
+const Wallet = styled.div`
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+  padding: 10px;
+`;
+
 const Money = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 160px;
-  height: 40px;
+
   border-radius: 5px;
   margin: 10px 0;
   display: flex;
@@ -67,9 +76,7 @@ const MoneyQuantity = styled.div`
   border: 1px solid gray;
   padding: 2px;
 `;
-const Deposit = styled.button`
-  display: flex;
-`;
+
 const Amount = styled.div`
   display: flex;
   padding: 10px;

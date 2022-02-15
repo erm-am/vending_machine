@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../hooks/useStore";
 import styled from "styled-components";
-import { Button } from "../../components/Button";
+import { Button } from "../../components/core/Button";
 export const ShopWallet: React.FC = observer((props) => {
   const vendingMachineStore = useStore().shop.vendingMachineStore;
   return (
@@ -27,14 +27,12 @@ const Container = styled.div`
   flex-direction: column;
   padding: 5px;
   background: gray;
-  border: 1px solid black;
 `;
 const Title = styled.h4`
   text-align: center;
 `;
 const Money = styled.div`
   display: flex;
-
   padding: 5px;
   flex-direction: column;
   justify-content: center;

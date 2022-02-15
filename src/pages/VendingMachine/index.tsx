@@ -14,49 +14,50 @@ export const VendingMachine: React.FC = observer((props) => {
     shop.init();
   }, []);
   return (
-    <Container>
-      <ShopSection>
-        <Wrapper direction="row">
+    <Shop>
+      <VendingSection>
+        <Limiter direction="row">
           <ShopProducts />
           <ReceiverWallet />
-        </Wrapper>
-      </ShopSection>
+        </Limiter>
+      </VendingSection>
+
       <UserSection>
-        <Wrapper direction="column">
-          <UserWallet />
+        <Limiter direction="row">
           <UserProducts />
-        </Wrapper>
+          <UserWallet />
+        </Limiter>
       </UserSection>
-    </Container>
+    </Shop>
   );
 });
 
-const Container = styled.div`
+const Shop = styled.div`
   display: flex;
+  height: 100vh;
   flex-direction: column;
-  height: 100%;
+  color: white;
 `;
-const ShopSection = styled.div`
-  flex-direction: row;
 
+const VendingSection = styled.div`
   display: flex;
   flex: 1;
   background-color: #20212e;
-  border: 1px dotted red;
   justify-content: center;
+  padding: 20px;
 `;
-const UserSection = styled.div`
-  flex-direction: row;
 
+const UserSection = styled.div`
   display: flex;
   flex: 1;
   background-color: #191923;
-  border: 1px dotted red;
   justify-content: center;
+  padding: 20px;
 `;
-const Wrapper = styled.div<{ direction: "row" | "column" }>`
+
+const Limiter = styled.div<{ direction: "row" | "column" }>`
   display: flex;
-  width: 800px;
+  width: 900px;
   align-items: flex-start;
   flex-direction: ${(p) => p.direction};
 `;

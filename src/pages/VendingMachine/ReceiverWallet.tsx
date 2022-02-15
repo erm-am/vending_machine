@@ -2,21 +2,43 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../hooks/useStore";
 import styled from "styled-components";
-import { Button } from "../../components/Button";
+import { Button } from "../../components/core/Button";
 export const ReceiverWallet: React.FC = observer(() => {
   const vendingMachineStore = useStore().shop.vendingMachineStore;
   return (
     <Container>
-      <Title>Монетоприемник</Title>
-      {Array.from(vendingMachineStore.receiverWallet).map(([money_id, qty]) => {
-        return (
-          <Money key={money_id}>
-            <MoneyCaption>
-              {money_id} {qty}
-            </MoneyCaption>
-          </Money>
-        );
-      })}
+      <Title>Касса автомата</Title>
+      <table>
+        <thead>
+          <th>Купюра</th>
+          <th>В монетоприемнике</th>
+          <th>В кассе автомата</th>
+        </thead>
+
+        <tbody>
+          {Array.from(vendingMachineStore.receiverWallet).map(([money_id, qty]) => {
+            return (
+              <tr key={money_id}>
+                <td>{money_id} руб</td>
+                <td>{qty}</td>
+                <td>0</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      {/* <Wallet>
+        {Array.from(vendingMachineStore.receiverWallet).map(([money_id, qty]) => {
+          return (
+            <Money key={money_id}>
+              <MoneyCaption>
+                {money_id} {qty}
+              </MoneyCaption>
+            </Money>
+          );
+        })}
+      </Wallet> */}
+
       <Button
         onClick={() => {
           vendingMachineStore.refund();
@@ -43,22 +65,27 @@ const TotalReceiverMoney = observer(() => {
 
 const Container = styled.div`
   display: flex;
-  flex: 1;
   flex-direction: column;
-  padding: 5px;
-  color: white;
-  border: 1px solid black;
+
+  flex: 1;
+  height: 100%;
 `;
 const Title = styled.h4`
-  text-align: center;
-`;
-const Money = styled.div`
-  display: flex;
-
   padding: 5px;
+`;
+const Wallet = styled.div`
+  display: flex;
+  flex: 1;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  border: 1px solid red;
+  padding: 10px;
+`;
+
+const Money = styled.strong`
+  display: flex;
+  flex: 1;
+  padding: 5px;
+  border: 1px solid #ffffff5c;
 `;
 const MoneyCaption = styled.strong`
   display: flex;
