@@ -9,6 +9,7 @@ const userWalletFakeData: Wallet = new Map([
   [100, 5],
   [200, 5],
   [500, 5],
+  [1000, 5],
 ]);
 const shopWalletFakeData: Wallet = new Map([
   [1, 50],
@@ -19,6 +20,7 @@ const shopWalletFakeData: Wallet = new Map([
   [100, 50],
   [200, 50],
   [500, 50],
+  [1000, 50],
 ]);
 const receiverWalletFakeData: Wallet = new Map([
   [1, 0],
@@ -29,6 +31,7 @@ const receiverWalletFakeData: Wallet = new Map([
   [100, 0],
   [200, 0],
   [500, 0],
+  [1000, 0],
 ]);
 const shopProductsFakeData: ShopProducts = new Map([
   [1, { qty: 20, price: 10, name: "Кофе" }],
