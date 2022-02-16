@@ -12,7 +12,8 @@ export const ReceiverWallet: React.FC = observer(() => {
     { key: "receiverWalletMoneyQty", title: "Монетоприемник (кол-во)" },
     { key: "shopWalletMoneyQty", title: "Касса автомата (кол-во)" },
   ];
-
+  const handleClickBuy = () => vendingMachineStore.buy();
+  const handleClickRefund = () => vendingMachineStore.refund();
   return (
     <Container>
       <Title>Касса торгового автомата</Title>
@@ -21,6 +22,8 @@ export const ReceiverWallet: React.FC = observer(() => {
       </GridContainer>
       <TotalOrder />
       <TotalReceiverMoney />
+      <Button onClick={handleClickRefund}>Забрать деньги</Button>
+      <Button onClick={handleClickBuy}>Купить</Button>
     </Container>
   );
 });
