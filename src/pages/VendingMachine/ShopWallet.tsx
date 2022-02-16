@@ -38,7 +38,7 @@ const Money = styled.div`
   justify-content: center;
   align-items: center;
 `;
-const MoneyCaption = styled.strong`
+const MoneyCaption = styled.span`
   display: flex;
 `;
 const MoneyQuantity = styled.div`

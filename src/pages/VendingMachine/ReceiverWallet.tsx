@@ -3,50 +3,22 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../../hooks/useStore";
 import styled from "styled-components";
 import { Button } from "../../components/core/Button";
+import { Grid } from "../../components/core/Grid";
+import { Money } from "../../types/stores";
 export const ReceiverWallet: React.FC = observer(() => {
   const vendingMachineStore = useStore().shop.vendingMachineStore;
+  const gridColumns = [
+    { key: "name", title: "Наименование", renderer: (value) => `${value} руб.` },
+    { key: "receiverWalletMoneyQty", title: "Монетоприемник (кол-во)" },
+    { key: "shopWalletMoneyQty", title: "Касса автомата (кол-во)" },
+  ];
+
   return (
     <Container>
-      <Title>Касса автомата</Title>
-      <table>
-        <thead>
-          <th>Купюра</th>
-          <th>В монетоприемнике</th>
-          <th>В кассе автомата</th>
-        </thead>
-
-        <tbody>
-          {Array.from(vendingMachineStore.receiverWallet).map(([money_id, qty]) => {
-            return (
-              <tr key={money_id}>
-                <td>{money_id} руб</td>
-                <td>{qty}</td>
-                <td>0</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      {/* <Wallet>
-        {Array.from(vendingMachineStore.receiverWallet).map(([money_id, qty]) => {
-          return (
-            <Money key={money_id}>
-              <MoneyCaption>
-                {money_id} {qty}
-              </MoneyCaption>
-            </Money>
-          );
-        })}
-      </Wallet> */}
-
-      <Button
-        onClick={() => {
-          vendingMachineStore.refund();
-        }}
-      >
-        Забрать деньги
-      </Button>
-      <Button onClick={() => vendingMachineStore.buy()}>Купить</Button>
+      <Title>Касса торгового автомата</Title>
+      <GridContainer>
+        <Grid rows={vendingMachineStore.shopAndReceiverWallets} columns={gridColumns} />
+      </GridContainer>
       <TotalOrder />
       <TotalReceiverMoney />
     </Container>
@@ -55,20 +27,27 @@ export const ReceiverWallet: React.FC = observer(() => {
 
 const TotalOrder = observer(() => {
   const vendingMachineStore = useStore().shop.vendingMachineStore;
-  return <StyledAmount>Сумма к оплате: {vendingMachineStore.totalOrder}</StyledAmount>;
+  return (
+    <StyledAmount>
+      Сумма к оплате: <strong>{vendingMachineStore.totalOrder}</strong>
+    </StyledAmount>
+  );
 });
 
 const TotalReceiverMoney = observer(() => {
   const vendingMachineStore = useStore().shop.vendingMachineStore;
-  return <StyledAmount>Сумма в монетоприемнике: {vendingMachineStore.totalReceiverMoney}</StyledAmount>;
+  return (
+    <StyledAmount>
+      Сумма в монетоприемнике: <strong>{vendingMachineStore.totalReceiverMoney}</strong>
+    </StyledAmount>
+  );
 });
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-
-  flex: 1;
   height: 100%;
+  width: 50%;
 `;
 const Title = styled.h4`
   padding: 5px;
@@ -81,17 +60,22 @@ const Wallet = styled.div`
   padding: 10px;
 `;
 
-const Money = styled.strong`
+const Money = styled.span`
   display: flex;
   flex: 1;
   padding: 5px;
   border: 1px solid #ffffff5c;
 `;
-const MoneyCaption = styled.strong`
+const MoneyCaption = styled.span`
   display: flex;
 `;
 
 const StyledAmount = styled.div`
   display: flex;
-  font-weight: bold;
+
+  padding: 5px;
+`;
+const GridContainer = styled.div`
+  display: flex;
+  padding: 10px;
 `;

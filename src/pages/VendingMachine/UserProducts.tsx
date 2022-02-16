@@ -7,7 +7,7 @@ export const UserProducts: React.FC = observer((props) => {
   const userStore = useStore().shop.userStore;
   return (
     <Container>
-      <Title>ПРодукты пользователя</Title>
+      <Title>Продукты пользователя (readonly)</Title>
       <Products>
         {Array.from(userStore.userProducts).map(([id, { name, qty }]) => {
           return (
@@ -26,7 +26,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 
-  flex: 1;
+  width: 50%;
   height: 100%;
 `;
 const Title = styled.h4`
@@ -41,8 +41,8 @@ const Products = styled.div`
   grid-row-gap: 10px;
   padding: 10px;
 `;
-const Product = styled.strong`
-  border: 1px solid #ffffff5c;
+const Product = styled.span`
+  border: 1px solid #000000;
   padding: 10px;
   border-radius: 5px;
 `;

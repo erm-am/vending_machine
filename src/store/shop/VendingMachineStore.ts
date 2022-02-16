@@ -1,7 +1,7 @@
 import { makeObservable, observable, computed, action, toJS, runInAction } from "mobx";
 import { UserProducts, ShopProducts, ShopSelectableProducts, Wallet } from "../../types/stores";
 import { ShopStore } from "./index";
-
+import { convertShopAndReceiverWalletsToGridData } from "./utils";
 export class VendingMachineStore {
   shopStore: ShopStore; // parent store;
   shopProducts: ShopSelectableProducts = new Map();
@@ -21,6 +21,7 @@ export class VendingMachineStore {
       totalOrder: computed,
       totalReceiverMoney: computed,
       totalShopMoney: computed,
+      shopAndReceiverWallets: computed,
     });
     this.shopStore = shopStore;
   }
@@ -101,5 +102,9 @@ export class VendingMachineStore {
   }
   get totalShopMoney() {
     return Array.from(this.shopWallet).reduce((result, [money_id, qty]) => result + result + money_id * qty, 0);
+  }
+  get shopAndReceiverWallets() {
+    // Объеденяем 2 источника данных для вывода в 1 таблице
+    return convertShopAndReceiverWalletsToGridData(this.receiverWallet, this.shopWallet);
   }
 }

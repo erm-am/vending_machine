@@ -32,7 +32,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 
-  flex: 1;
+  width: 50%;
   height: 100%;
 `;
 const Title = styled.h4`
@@ -52,9 +52,7 @@ const Money = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   border-radius: 5px;
-  margin: 10px 0;
   display: flex;
   cursor: pointer;
   position: relative;
@@ -63,7 +61,7 @@ const Money = styled.div`
     background: #22b754;
   }
 `;
-const MoneyCaption = styled.strong`
+const MoneyCaption = styled.span`
   display: flex;
 `;
 const MoneyQuantity = styled.div`

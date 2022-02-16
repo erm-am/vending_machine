@@ -8,14 +8,12 @@ export const ShopProducts: React.FC = observer((props) => {
   const vendingMachineStore = useStore().shop.vendingMachineStore;
   return (
     <Container>
-      <Title>Продукты</Title>
+      <Title>Продукты торгового автомата</Title>
       <Products>
         {Array.from(vendingMachineStore.shopProducts).map(([id, { name, amount, qty, selected, price }]) => {
           return (
             <Product key={id}>
-              <div>
-                {name} {amount}
-              </div>
+              <div>{name}</div>
               <div>
                 <Button onClick={() => vendingMachineStore.decProduct(id)} disabled={!qty}>
                   -
@@ -38,7 +36,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 
-  flex: 1;
+  width: 50%;
   height: 100%;
 `;
 const Title = styled.h4`
@@ -53,8 +51,12 @@ const Products = styled.div`
   grid-row-gap: 10px;
   padding: 10px;
 `;
-const Product = styled.strong`
-  border: 1px solid #ffffff5c;
+const Product = styled.span`
+  border: 1px solid #000000;
   padding: 10px;
   border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
 `;

@@ -57,7 +57,7 @@ const UserSection = styled.div`
 
 const Limiter = styled.div<{ direction: "row" | "column" }>`
   display: flex;
-  width: 900px;
+  min-width: 900px;
   align-items: flex-start;
   flex-direction: ${(p) => p.direction};
 `;
