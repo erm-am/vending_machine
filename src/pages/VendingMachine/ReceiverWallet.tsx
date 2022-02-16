@@ -14,6 +14,9 @@ export const ReceiverWallet: React.FC = observer(() => {
   ];
   const handleClickBuy = () => vendingMachineStore.buy();
   const handleClickRefund = () => vendingMachineStore.refund();
+  const totalReceiverMoney = vendingMachineStore.totalReceiverMoney;
+  const totalOrder = vendingMachineStore.totalOrder;
+  const canBuy = totalReceiverMoney >= totalOrder && totalOrder > 0 && totalReceiverMoney > 0;
   return (
     <Container>
       <Title>Касса торгового автомата</Title>
@@ -22,8 +25,12 @@ export const ReceiverWallet: React.FC = observer(() => {
       </GridContainer>
       <TotalOrder />
       <TotalReceiverMoney />
-      <Button onClick={handleClickRefund}>Забрать деньги</Button>
-      <Button onClick={handleClickBuy}>Купить</Button>
+      <Action disabled={!vendingMachineStore.totalReceiverMoney} onClick={handleClickRefund}>
+        Забрать деньги
+      </Action>
+      <Action disabled={!canBuy} onClick={handleClickBuy}>
+        Купить
+      </Action>
     </Container>
   );
 });
@@ -32,7 +39,7 @@ const TotalOrder = observer(() => {
   const vendingMachineStore = useStore().shop.vendingMachineStore;
   return (
     <StyledAmount>
-      Сумма к оплате: <strong>{vendingMachineStore.totalOrder}</strong>
+      Сумма к оплате:&nbsp;<b>{vendingMachineStore.totalOrder} руб.</b>
     </StyledAmount>
   );
 });
@@ -41,7 +48,7 @@ const TotalReceiverMoney = observer(() => {
   const vendingMachineStore = useStore().shop.vendingMachineStore;
   return (
     <StyledAmount>
-      Сумма в монетоприемнике: <strong>{vendingMachineStore.totalReceiverMoney}</strong>
+      Сумма в монетоприемнике:&nbsp;<b>{vendingMachineStore.totalReceiverMoney} руб.</b>
     </StyledAmount>
   );
 });
@@ -63,16 +70,6 @@ const Wallet = styled.div`
   padding: 10px;
 `;
 
-const Money = styled.span`
-  display: flex;
-  flex: 1;
-  padding: 5px;
-  border: 1px solid #ffffff5c;
-`;
-const MoneyCaption = styled.span`
-  display: flex;
-`;
-
 const StyledAmount = styled.div`
   display: flex;
 
@@ -81,4 +78,7 @@ const StyledAmount = styled.div`
 const GridContainer = styled.div`
   display: flex;
   padding: 10px;
+`;
+const Action = styled(Button)`
+  padding: 5px;
 `;

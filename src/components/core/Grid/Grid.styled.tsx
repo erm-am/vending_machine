@@ -17,9 +17,6 @@ export const HeaderCell = styled.th`
   color: white;
   font-size: 13px;
   /* box-shadow: inset 0px -1px 0 0px black; */
-  &:last-child {
-    padding-right: 0;
-  }
 `;
 export const Cell = styled.td`
   font-size: 16px;

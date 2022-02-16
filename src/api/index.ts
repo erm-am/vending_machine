@@ -33,28 +33,29 @@ const receiverWalletFakeData: Wallet = new Map([
   [500, 0],
   [1000, 0],
 ]);
+
 const shopProductsFakeData: ShopProducts = new Map([
-  [1, { qty: 20, price: 10, name: "Кофе" }],
-  [2, { qty: 20, price: 10, name: "Чай" }],
-  [3, { qty: 20, price: 10, name: "Шоколадка" }],
-  [4, { qty: 20, price: 10, name: "Конфета" }],
-  [5, { qty: 20, price: 10, name: "Pepsi" }],
+  [1, { qty: 20, price: 10, name: "Эспрессо" }],
+  [2, { qty: 20, price: 10, name: "Капучино" }],
+  [3, { qty: 20, price: 10, name: "Латте" }],
+  [4, { qty: 20, price: 10, name: "Черный чай" }],
+  [5, { qty: 20, price: 10, name: "Зеленый чай" }],
   [6, { qty: 20, price: 10, name: "Coca-cola" }],
-  [7, { qty: 20, price: 10, name: "Конфета111" }],
-  [8, { qty: 20, price: 10, name: "Pepsi222" }],
-  [9, { qty: 20, price: 10, name: "Coca-cola333" }],
+  [7, { qty: 20, price: 10, name: "Fanta" }],
+  [8, { qty: 20, price: 10, name: "Pepsi" }],
+  [9, { qty: 20, price: 10, name: "Sprite" }],
 ]);
 
 const userProductsFakeData: UserProducts = new Map([
-  [1, { qty: 0, name: "Кофе" }],
-  [2, { qty: 0, name: "Чай" }],
-  [3, { qty: 0, name: "Шоколадка" }],
-  [4, { qty: 0, name: "Конфета" }],
-  [5, { qty: 0, name: "Pepsi" }],
+  [1, { qty: 0, name: "Эспрессо" }],
+  [2, { qty: 0, name: "Капучино" }],
+  [3, { qty: 0, name: "Латте" }],
+  [4, { qty: 0, name: "Черный чай" }],
+  [5, { qty: 0, name: "Зеленый чай" }],
   [6, { qty: 0, name: "Coca-cola" }],
-  [7, { qty: 0, name: "Конфета111" }],
-  [8, { qty: 0, name: "Pepsi222" }],
-  [9, { qty: 0, name: "Coca-cola333" }],
+  [7, { qty: 0, name: "Fanta" }],
+  [8, { qty: 0, name: "Pepsi" }],
+  [9, { qty: 0, name: "Sprite" }],
 ]);
 
 export class ApiService {

@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../../hooks/useStore";
 import styled from "styled-components";
 import { Button } from "../../components/core/Button";
+import { Product } from "../../components/Product";
 
 export const ShopProducts: React.FC = observer((props) => {
   const vendingMachineStore = useStore().shop.vendingMachineStore;
@@ -12,9 +13,9 @@ export const ShopProducts: React.FC = observer((props) => {
       <Products>
         {Array.from(vendingMachineStore.shopProducts).map(([id, { name, amount, qty, selected, price }]) => {
           return (
-            <Product key={id}>
-              <div>{name}</div>
-              <div>
+            <Product key={id} disabled={!qty}>
+              <Label>{name}</Label>
+              <Label>
                 <Button onClick={() => vendingMachineStore.decProduct(id)} disabled={!qty}>
                   -
                 </Button>
@@ -22,8 +23,8 @@ export const ShopProducts: React.FC = observer((props) => {
                 <Button onClick={() => vendingMachineStore.incProduct(id)} disabled={!qty}>
                   +
                 </Button>
-              </div>
-              <div>Цена: {price}</div>
+              </Label>
+              <Label>Цена: {price}</Label>
             </Product>
           );
         })}
@@ -42,6 +43,9 @@ const Container = styled.div`
 const Title = styled.h4`
   padding: 5px;
 `;
+const Label = styled.span`
+  padding: 5px;
+`;
 const Products = styled.div`
   display: grid;
   flex: 1;
@@ -50,13 +54,4 @@ const Products = styled.div`
   grid-column-gap: 10px;
   grid-row-gap: 10px;
   padding: 10px;
-`;
-const Product = styled.span`
-  border: 1px solid #000000;
-  padding: 10px;
-  border-radius: 5px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
 `;

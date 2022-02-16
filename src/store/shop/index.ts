@@ -53,9 +53,9 @@ export class ShopStore {
   }
 
   moneyTransaction({ from, to, payload }: MoneyTransaction) {
-    for (const [money_id, qty] of payload) {
-      from.set(money_id, from.get(money_id) - qty);
-      to.set(money_id, to.get(money_id) + qty);
+    for (const [moneyId, qty] of payload) {
+      from.set(moneyId, from.get(moneyId) - qty);
+      to.set(moneyId, to.get(moneyId) + qty);
     }
   }
   productTransaction({ from, to, payload }: ProductTransaction) {

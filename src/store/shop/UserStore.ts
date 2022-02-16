@@ -16,16 +16,19 @@ export class UserStore {
     this.shopStore = shopStore;
   }
 
-  transferUserMoneyToVendingMachine(money_id: Money) {
+  transferUserMoneyToVendingMachine(moneyId: Money, currentQty) {
+    if (!currentQty) {
+      return;
+    }
     this.shopStore.moneyTransaction({
       from: this.userWallet,
       to: this.shopStore.vendingMachineStore.receiverWallet,
-      payload: new Map([[money_id, 1]]),
+      payload: new Map([[moneyId, 1]]),
     });
   }
 
   get totalUserMoney() {
-    const total = Array.from(this.userWallet).reduce((result, [money_id, qty]) => result + qty * money_id, 0);
+    const total = Array.from(this.userWallet).reduce((result, [moneyId, qty]) => result + qty * moneyId, 0);
     return total;
   }
 }

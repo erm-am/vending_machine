@@ -1,29 +1,30 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../hooks/useStore";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Button } from "../../components/core/Button";
+import { Money } from "../../types/stores";
 export const UserWallet: React.FC = observer((props) => {
   const userStore = useStore().shop.userStore;
-
+  const handleClickDeposit = (moneyId: Money, qty: number) => {
+    userStore.transferUserMoneyToVendingMachine(moneyId, qty);
+  };
   return (
     <Container>
       <Title>Деньги пользователя</Title>
       <Wallet>
-        {Array.from(userStore.userWallet).map(([money_id, qty]) => {
+        {Array.from(userStore.userWallet).map(([moneyId, currentQty]) => {
           return (
-            <Money
-              key={money_id}
-              onClick={() => {
-                if (qty > 0) userStore.transferUserMoneyToVendingMachine(money_id);
-              }}
-            >
-              <MoneyCaption>{money_id} руб</MoneyCaption>
-              <MoneyQuantity title="Количество">{qty}</MoneyQuantity>
+            <Money disabled={!currentQty} key={moneyId} onClick={() => handleClickDeposit(moneyId, currentQty)}>
+              <MoneyCaption>{moneyId} руб</MoneyCaption>
+              <MoneyQuantity title="Количество">{currentQty}</MoneyQuantity>
             </Money>
           );
         })}
       </Wallet>
+      <Amount>
+        Сумма:&nbsp;<b>{userStore.totalUserMoney} руб.</b>
+      </Amount>
     </Container>
   );
 });
@@ -31,7 +32,6 @@ export const UserWallet: React.FC = observer((props) => {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-
   width: 50%;
   height: 100%;
 `;
@@ -48,7 +48,7 @@ const Wallet = styled.div`
   padding: 10px;
 `;
 
-const Money = styled.div`
+const Money = styled.div<{ disabled: boolean }>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -58,8 +58,21 @@ const Money = styled.div`
   position: relative;
   background: #242532;
   &:hover {
-    background: #22b754;
+    background: #ffcc00;
+    color: black;
   }
+  ${(props) =>
+    props.disabled &&
+    css`
+      background: #8080800f;
+      color: gray;
+      cursor: default;
+      user-select: none;
+      &:hover {
+        background: #8080800f;
+        color: gray;
+      }
+    `}
 `;
 const MoneyCaption = styled.span`
   display: flex;
@@ -77,7 +90,6 @@ const MoneyQuantity = styled.div`
 
 const Amount = styled.div`
   display: flex;
-  padding: 10px;
-  width: 100%;
-  justify-content: center;
+  padding-left: 10px;
+  padding-bottom: 15px;
 `;

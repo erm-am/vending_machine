@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../../hooks/useStore";
 import styled from "styled-components";
 import { Button } from "../../components/core/Button";
+import { Product } from "../../components/Product";
 export const UserProducts: React.FC = observer((props) => {
   const userStore = useStore().shop.userStore;
   return (
@@ -11,9 +12,9 @@ export const UserProducts: React.FC = observer((props) => {
       <Products>
         {Array.from(userStore.userProducts).map(([id, { name, qty }]) => {
           return (
-            <Product key={id}>
-              <div>{name}</div>
-              <div>{qty}</div>
+            <Product key={id} disabled={!qty}>
+              <Label>{name}</Label>
+              <Label>{qty} (шт.)</Label>
             </Product>
           );
         })}
@@ -32,6 +33,8 @@ const Container = styled.div`
 const Title = styled.h4`
   padding: 5px;
 `;
+const Label = styled.span``;
+
 const Products = styled.div`
   display: grid;
   flex: 1;
@@ -40,9 +43,4 @@ const Products = styled.div`
   grid-column-gap: 10px;
   grid-row-gap: 10px;
   padding: 10px;
-`;
-const Product = styled.span`
-  border: 1px solid #000000;
-  padding: 10px;
-  border-radius: 5px;
 `;

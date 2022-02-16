@@ -32,14 +32,14 @@ export class VendingMachineStore {
     const filteredShopMoneyWallet = Array.from(shopMoneyWallet).sort(([left], [right]) => right - left); // Старшие монеты в приоритете
     let restMoneyForChange = changeValue;
     while (restMoneyForChange !== 0) {
-      for (let [money_id, qty] of filteredShopMoneyWallet) {
-        if (money_id <= restMoneyForChange && qty) {
-          if (userChange.has(money_id)) {
-            userChange.set(money_id, userChange.get(money_id) + 1);
+      for (let [moneyId, qty] of filteredShopMoneyWallet) {
+        if (moneyId <= restMoneyForChange && qty) {
+          if (userChange.has(moneyId)) {
+            userChange.set(moneyId, userChange.get(moneyId) + 1);
           } else {
-            userChange.set(money_id, 1);
+            userChange.set(moneyId, 1);
           }
-          restMoneyForChange = restMoneyForChange - money_id;
+          restMoneyForChange = restMoneyForChange - moneyId;
           break;
         }
       }
@@ -98,10 +98,10 @@ export class VendingMachineStore {
   }
 
   get totalReceiverMoney() {
-    return Array.from(this.receiverWallet).reduce((result, [money_id, qty]) => result + money_id * qty, 0);
+    return Array.from(this.receiverWallet).reduce((result, [moneyId, qty]) => result + moneyId * qty, 0);
   }
   get totalShopMoney() {
-    return Array.from(this.shopWallet).reduce((result, [money_id, qty]) => result + result + money_id * qty, 0);
+    return Array.from(this.shopWallet).reduce((result, [moneyId, qty]) => result + result + moneyId * qty, 0);
   }
   get shopAndReceiverWallets() {
     // Объеденяем 2 источника данных для вывода в 1 таблице

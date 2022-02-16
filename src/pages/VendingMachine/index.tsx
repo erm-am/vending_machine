@@ -2,11 +2,9 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../hooks/useStore";
 import { UserWallet } from "./UserWallet";
-import { ShopWallet } from "./ShopWallet";
 import { ReceiverWallet } from "./ReceiverWallet";
 import { ShopProducts } from "./ShopProducts";
 import { UserProducts } from "./UserProducts";
-import { Page } from "../../components/Layout";
 import styled from "styled-components";
 export const VendingMachine: React.FC = observer((props) => {
   const shop = useStore().shop;
