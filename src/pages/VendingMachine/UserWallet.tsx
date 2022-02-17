@@ -32,7 +32,7 @@ export const UserWallet: React.FC = observer((props) => {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 50%;
+  flex: 1;
   height: 100%;
 `;
 const Title = styled.h4`
@@ -41,8 +41,8 @@ const Title = styled.h4`
 const Wallet = styled.div`
   display: grid;
   flex: 1;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(80px, 1fr));
+  grid-template-rows: repeat(3, minmax(80px, 1fr));
   grid-column-gap: 10px;
   grid-row-gap: 10px;
   padding: 10px;

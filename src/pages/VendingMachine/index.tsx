@@ -32,9 +32,10 @@ export const VendingMachine: React.FC = observer((props) => {
 
 const Shop = styled.div`
   display: flex;
-  height: 100vh;
+
   flex-direction: column;
   color: white;
+  min-height: 100vh;
 `;
 
 const VendingSection = styled.div`
@@ -55,7 +56,10 @@ const UserSection = styled.div`
 
 const Limiter = styled.div<{ direction: "row" | "column" }>`
   display: flex;
-  min-width: 900px;
+  max-width: 1100px;
   align-items: flex-start;
+  flex-wrap: wrap;
   flex-direction: ${(p) => p.direction};
+  width: 100%;
+  height: 100%;
 `;

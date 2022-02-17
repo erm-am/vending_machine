@@ -57,7 +57,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: 50%;
+  width: 100%;
+  flex: 1;
 `;
 const Title = styled.h4`
   padding: 5px;
@@ -72,12 +73,13 @@ const Wallet = styled.div`
 
 const StyledAmount = styled.div`
   display: flex;
-
   padding: 5px;
 `;
 const GridContainer = styled.div`
   display: flex;
   padding: 10px;
+  overflow: auto;
+  width: 100%;
 `;
 const Action = styled(Button)`
   padding: 5px;
