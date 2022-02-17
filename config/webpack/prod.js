@@ -12,7 +12,6 @@ module.exports = merge(common, {
     },
     react: ["react", "react-dom"],
   },
-  devtool: false,
   output: {
     filename: "js/[name].[contenthash].bundle.js",
     publicPath: "./",

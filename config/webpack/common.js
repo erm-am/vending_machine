@@ -63,7 +63,7 @@ module.exports = {
       patterns: [
         {
           from: `${paths.public}`,
-          to: `${paths.build}/assets`,
+          to: `${paths.build}`,
           // noErrorOnMissing: true,
           globOptions: {
             ignore: ["*.DS_Store", "**/index.html"],
