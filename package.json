@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack serve --config \"./config/webpack/dev.js\"",
-    "build": "cross-env NODE_ENV=production webpack --config \"./config/webpack/prod.js\""
+    "build": "cross-env NODE_ENV=production webpack --config \"./config/webpack/prod.js\"",
+    "test": "jest"
   },
   "author": "alexey",
   "license": "ISC",
@@ -14,6 +15,8 @@
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.3",
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.11",
     "@types/styled-components": "^5.1.22",
@@ -24,9 +27,11 @@
     "cross-env": "^7.0.3",
     "dotenv-webpack": "^7.1.0",
     "html-webpack-plugin": "^5.5.0",
+    "jest": "^27.5.1",
     "mini-css-extract-plugin": "^2.5.3",
     "prettier": "^2.5.1",
     "react-is": "^17.0.2",
+    "ts-jest": "^27.1.3",
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.5",
     "webpack": "^5.68.0",
