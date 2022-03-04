@@ -6,7 +6,7 @@ import { Button } from "../../components/core/Button";
 import { Grid } from "../../components/core/Grid";
 import { Money } from "../../types/stores";
 export const ReceiverWallet: React.FC = observer(() => {
-  const vendingMachineStore = useStore().shop.vendingMachineStore;
+  const { vendingMachineStore } = useStore().shop;
   const gridColumns = [
     { key: "name", title: "Наименование", renderer: (value) => `${value} руб.` },
     { key: "receiverWalletMoneyQty", title: "Монетоприемник (кол-во)" },

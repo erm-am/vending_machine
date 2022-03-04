@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Button } from "../../components/core/Button";
 import { Product } from "../../components/Product";
 export const UserProducts: React.FC = observer((props) => {
-  const userStore = useStore().shop.userStore;
+  const { userStore } = useStore().shop;
   return (
     <Container>
       <Title>Продукты пользователя (readonly)</Title>

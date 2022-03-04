@@ -5,7 +5,7 @@ import styled, { css } from "styled-components";
 import { Button } from "../../components/core/Button";
 import { Money } from "../../types/stores";
 export const UserWallet: React.FC = observer((props) => {
-  const userStore = useStore().shop.userStore;
+  const { userStore } = useStore().shop;
   const handleClickDeposit = (moneyId: Money, qty: number) => {
     userStore.transferUserMoneyToVendingMachine(moneyId, qty);
   };

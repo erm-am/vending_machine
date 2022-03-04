@@ -29,10 +29,10 @@ export class VendingMachineStore {
   getChange(shopMoneyWallet: Wallet, changeValue: number): Wallet {
     // Расчет сдачи
     const userChange: Wallet = new Map();
-    const filteredShopMoneyWallet = Array.from(shopMoneyWallet).sort(([left], [right]) => right - left); // Старшие монеты в приоритете
+    const sortedShopMoneyWallet = Array.from(shopMoneyWallet).sort(([left], [right]) => right - left); // Старшие монеты в приоритете
     let restMoneyForChange = changeValue;
     while (restMoneyForChange !== 0) {
-      for (let [moneyId, qty] of filteredShopMoneyWallet) {
+      for (let [moneyId, qty] of sortedShopMoneyWallet) {
         if (moneyId <= restMoneyForChange && qty) {
           if (userChange.has(moneyId)) {
             userChange.set(moneyId, userChange.get(moneyId) + 1);

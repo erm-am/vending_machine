@@ -6,7 +6,7 @@ import { Button } from "../../components/core/Button";
 import { Product } from "../../components/Product";
 
 export const ShopProducts: React.FC = observer((props) => {
-  const vendingMachineStore = useStore().shop.vendingMachineStore;
+  const { vendingMachineStore } = useStore().shop;
   return (
     <Container>
       <Title>Продукты торгового автомата</Title>
