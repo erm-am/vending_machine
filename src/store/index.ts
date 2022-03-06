@@ -9,5 +9,6 @@ export class RootStore {
     this.shop = new ShopStore(this, api);
   }
 }
+//ui  add() => объект с функции => mobx
 
 export const store = new RootStore(new ApiService());
