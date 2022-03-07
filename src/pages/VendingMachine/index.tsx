@@ -24,7 +24,7 @@ export const VendingMachine: React.FC = observer((props) => {
 
       <UserSection>
         <Limiter direction="row">
-          {/* <UserProducts /> */}
+          <UserProducts />
           <UserWallet />
         </Limiter>
       </UserSection>

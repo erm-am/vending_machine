@@ -9,7 +9,6 @@ import { stores } from "./store/index";
 import { StoreContext } from "./store/context";
 import { GlobalStyles } from "./global-styles";
 
-console.log("stores", stores);
 ReactDOM.render(
   <React.StrictMode>
     <StoreContext.Provider value={stores}>

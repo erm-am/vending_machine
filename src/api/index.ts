@@ -1,5 +1,5 @@
-import { Wallet, UserProducts, ShopProducts, IUserProduct, IShopProduct, Money } from "../types/stores";
-import { setupWorker, rest } from "msw";
+import { IUserProduct, IShopProduct, Money } from "../types/stores";
+
 import { initServer } from "./server";
 initServer(); // fake server
 

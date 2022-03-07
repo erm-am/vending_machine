@@ -4,11 +4,16 @@ import { useStore } from "../../hooks/useStore";
 import styled from "styled-components";
 import { Button } from "../../components/core/Button";
 import { Product } from "../../components/Product";
-
+import { shopService } from "../../store/index";
 export const ShopProducts: React.FC = observer(() => {
   const { vending } = useStore();
+  const handleClickAddProductReserve = (productId: number) => {
+    shopService.addProductReserve(productId);
+  };
+  const handleClickRemoveProductReserve = (productId: number) => {
+    shopService.removeProductReserve(productId);
+  };
 
-  console.log("shopProducts.products", vending);
   return (
     <Container>
       <Title>Продукты торгового автомата</Title>
@@ -17,15 +22,15 @@ export const ShopProducts: React.FC = observer(() => {
           return (
             <Product key={product.id} disabled={!product.count}>
               <Label>{product.name}</Label>
-              {/* <Label>
-                <Button onClick={() => vendingMachineStore.decProduct(id)} disabled={!qty}>
+              <Label>
+                <Button onClick={() => handleClickRemoveProductReserve(product.id)} disabled={!product.count}>
                   -
                 </Button>
-                {selected}\{qty}
-                <Button onClick={() => vendingMachineStore.incProduct(id)} disabled={!qty}>
+                {product.reserved}\{product.count}
+                <Button onClick={() => handleClickAddProductReserve(product.id)} disabled={!product.count}>
                   +
                 </Button>
-              </Label> */}
+              </Label>
               <Label>Цена: {product.price}</Label>
             </Product>
           );

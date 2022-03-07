@@ -4,11 +4,9 @@ import { useStore } from "../../hooks/useStore";
 import styled, { css } from "styled-components";
 import { Button } from "../../components/core/Button";
 import { Money } from "../../types/stores";
+import { shopService } from "../../store/index";
 export const UserWallet: React.FC = observer((props) => {
   const { user } = useStore();
-  const handleClickDeposit = (moneyId: Money, qty: number) => {
-    // userStore.transferUserMoneyToVendingMachine(moneyId, qty);
-  };
 
   return (
     <Container>
@@ -16,14 +14,16 @@ export const UserWallet: React.FC = observer((props) => {
       <Wallet>
         {Array.from(user.userWallet.money).map(([moneyId, currentQty]) => {
           return (
-            <Money disabled={!currentQty} key={moneyId} onClick={() => handleClickDeposit(moneyId, currentQty)}>
+            <Money disabled={!currentQty} key={moneyId} onClick={() => shopService.cashInsert(moneyId)}>
               <MoneyCaption>{moneyId} руб</MoneyCaption>
               <MoneyQuantity title="Количество">{currentQty}</MoneyQuantity>
             </Money>
           );
         })}
       </Wallet>
-      <Amount>{/* Сумма:&nbsp;<b>{userStore.totalUserMoney} руб.</b> */}</Amount>
+      <Amount>
+        Сумма:&nbsp;<b>{user.userWallet.total} руб.</b>
+      </Amount>
     </Container>
   );
 });

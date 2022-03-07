@@ -48,7 +48,7 @@ export const initServer = () => {
   ];
 
   const userProducts = products.map((product) => ({ ...product, count: 0 }));
-  const shopProducts = products.map((product) => ({ ...product, count: 10, price: 12 }));
+  const shopProducts = products.map((product) => ({ ...product, count: 10, price: 12, reserved: 0 }));
 
   const worker = setupWorker(
     rest.get("/userWallet", (req, res, ctx) => res(ctx.json(userWallet))),
