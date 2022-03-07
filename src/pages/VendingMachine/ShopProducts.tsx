@@ -5,17 +5,19 @@ import styled from "styled-components";
 import { Button } from "../../components/core/Button";
 import { Product } from "../../components/Product";
 
-export const ShopProducts: React.FC = observer((props) => {
-  const { vendingMachineStore } = useStore().shop;
+export const ShopProducts: React.FC = observer(() => {
+  const { vending } = useStore();
+
+  console.log("shopProducts.products", vending);
   return (
     <Container>
       <Title>Продукты торгового автомата</Title>
       <Products>
-        {Array.from(vendingMachineStore.shopProducts).map(([id, { name, amount, qty, selected, price }]) => {
+        {vending.shopProducts.products.map((product) => {
           return (
-            <Product key={id} disabled={!qty}>
-              <Label>{name}</Label>
-              <Label>
+            <Product key={product.id} disabled={!product.count}>
+              <Label>{product.name}</Label>
+              {/* <Label>
                 <Button onClick={() => vendingMachineStore.decProduct(id)} disabled={!qty}>
                   -
                 </Button>
@@ -23,8 +25,8 @@ export const ShopProducts: React.FC = observer((props) => {
                 <Button onClick={() => vendingMachineStore.incProduct(id)} disabled={!qty}>
                   +
                 </Button>
-              </Label>
-              <Label>Цена: {price}</Label>
+              </Label> */}
+              <Label>Цена: {product.price}</Label>
             </Product>
           );
         })}

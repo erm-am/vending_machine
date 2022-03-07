@@ -5,12 +5,14 @@ import ReactDOM from "react-dom";
 import { App } from "./App";
 import ErrorBoundary from "./ErrorBoundary";
 
-import { store, RootStore } from "./store/index";
+import { stores } from "./store/index";
 import { StoreContext } from "./store/context";
 import { GlobalStyles } from "./global-styles";
+
+console.log("stores", stores);
 ReactDOM.render(
   <React.StrictMode>
-    <StoreContext.Provider value={store}>
+    <StoreContext.Provider value={stores}>
       <GlobalStyles />
       <App />
     </StoreContext.Provider>

@@ -6,51 +6,56 @@ import { Button } from "../../components/core/Button";
 import { Grid } from "../../components/core/Grid";
 import { Money } from "../../types/stores";
 export const ReceiverWallet: React.FC = observer(() => {
-  const { vendingMachineStore } = useStore().shop;
-  const gridColumns = [
-    { key: "name", title: "Наименование", renderer: (value) => `${value} руб.` },
-    { key: "receiverWalletMoneyQty", title: "Монетоприемник (кол-во)" },
-    { key: "shopWalletMoneyQty", title: "Касса автомата (кол-во)" },
-  ];
-  const handleClickBuy = () => vendingMachineStore.buy();
-  const handleClickRefund = () => vendingMachineStore.refund();
-  const totalReceiverMoney = vendingMachineStore.totalReceiverMoney;
-  const totalOrder = vendingMachineStore.totalOrder;
-  const canBuy = totalReceiverMoney >= totalOrder && totalOrder > 0 && totalReceiverMoney > 0;
-  return (
-    <Container>
-      <Title>Касса торгового автомата</Title>
-      <GridContainer>
-        <Grid rows={vendingMachineStore.shopAndReceiverWallets} columns={gridColumns} />
-      </GridContainer>
-      <TotalOrder />
-      <TotalReceiverMoney />
-      <Action disabled={!vendingMachineStore.totalReceiverMoney} onClick={handleClickRefund}>
-        Забрать деньги
-      </Action>
-      <Action disabled={!canBuy} onClick={handleClickBuy}>
-        Купить
-      </Action>
-    </Container>
-  );
+  const { vending } = useStore();
+
+  return <div>1</div>;
+
+  // const gridColumns = [
+  //   { key: "name", title: "Наименование", renderer: (value) => `${value} руб.` },
+  //   { key: "receiverWalletMoneyQty", title: "Монетоприемник (кол-во)" },
+  //   { key: "shopWalletMoneyQty", title: "Касса автомата (кол-во)" },
+  // ];
+  // const handleClickBuy = () => vendingMachineStore.buy();
+  // const handleClickRefund = () => vendingMachineStore.refund();
+  // const totalReceiverMoney = vendingMachineStore.totalReceiverMoney;
+  // const totalOrder = vendingMachineStore.totalOrder;
+  // const canBuy = totalReceiverMoney >= totalOrder && totalOrder > 0 && totalReceiverMoney > 0;
+  // return (
+  //   <Container>
+  //     <Title>Касса торгового автомата</Title>
+  //     <GridContainer>
+  //       <Grid rows={vendingMachineStore.shopAndReceiverWallets} columns={gridColumns} />
+  //     </GridContainer>
+  //     <TotalOrder />
+  //     <TotalReceiverMoney />
+  //     <Action disabled={!vendingMachineStore.totalReceiverMoney} onClick={handleClickRefund}>
+  //       Забрать деньги
+  //     </Action>
+  //     <Action disabled={!canBuy} onClick={handleClickBuy}>
+  //       Купить
+  //     </Action>
+  //   </Container>
+  // );
 });
 
 const TotalOrder = observer(() => {
-  const vendingMachineStore = useStore().shop.vendingMachineStore;
-  return (
-    <StyledAmount>
-      Сумма к оплате:&nbsp;<b>{vendingMachineStore.totalOrder} руб.</b>
-    </StyledAmount>
-  );
+  return <div>1</div>;
+  // const vendingMachineStore = useStore().shop.vendingMachineStore;
+  // return (
+  //   <StyledAmount>
+  //     Сумма к оплате:&nbsp;<b>{vendingMachineStore.totalOrder} руб.</b>
+  //   </StyledAmount>
+  // );
 });
 
 const TotalReceiverMoney = observer(() => {
-  const vendingMachineStore = useStore().shop.vendingMachineStore;
-  return (
-    <StyledAmount>
-      Сумма в монетоприемнике:&nbsp;<b>{vendingMachineStore.totalReceiverMoney} руб.</b>
-    </StyledAmount>
-  );
+  return <div>1</div>;
+  // const vendingMachineStore = useStore().shop.vendingMachineStore;
+  // return (
+  //   <StyledAmount>
+  //     Сумма в монетоприемнике:&nbsp;<b>{vendingMachineStore.totalReceiverMoney} руб.</b>
+  //   </StyledAmount>
+  // );
 });
 
 const Container = styled.div`

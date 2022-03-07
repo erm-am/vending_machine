@@ -5,15 +5,16 @@ import styled, { css } from "styled-components";
 import { Button } from "../../components/core/Button";
 import { Money } from "../../types/stores";
 export const UserWallet: React.FC = observer((props) => {
-  const { userStore } = useStore().shop;
+  const { user } = useStore();
   const handleClickDeposit = (moneyId: Money, qty: number) => {
-    userStore.transferUserMoneyToVendingMachine(moneyId, qty);
+    // userStore.transferUserMoneyToVendingMachine(moneyId, qty);
   };
+
   return (
     <Container>
       <Title>Деньги пользователя</Title>
       <Wallet>
-        {Array.from(userStore.userWallet).map(([moneyId, currentQty]) => {
+        {Array.from(user.userWallet.money).map(([moneyId, currentQty]) => {
           return (
             <Money disabled={!currentQty} key={moneyId} onClick={() => handleClickDeposit(moneyId, currentQty)}>
               <MoneyCaption>{moneyId} руб</MoneyCaption>
@@ -22,9 +23,7 @@ export const UserWallet: React.FC = observer((props) => {
           );
         })}
       </Wallet>
-      <Amount>
-        Сумма:&nbsp;<b>{userStore.totalUserMoney} руб.</b>
-      </Amount>
+      <Amount>{/* Сумма:&nbsp;<b>{userStore.totalUserMoney} руб.</b> */}</Amount>
     </Container>
   );
 });

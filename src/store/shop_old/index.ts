@@ -1,18 +1,16 @@
-import { ISelectableShopProductDetail, IShopProductDetail } from "./../../types/stores";
+import { ISelectableShopProductDetail, IShopProductDetail } from "../../types/stores";
 import { VendingMachineStore } from "./VendingMachineStore";
 import { UserStore } from "./UserStore";
-import { RootStore } from "../index";
+
 import { makeObservable, observable, computed, action, toJS, runInAction } from "mobx";
-import { ApiService } from "../../api";
+
 import { MoneyTransaction, ProductTransaction, UserProducts, ShopProducts, ShopSelectableProducts } from "../../types/stores";
 
 export class ShopStore {
   vendingMachineStore: VendingMachineStore; // child store
   userStore: UserStore; // child store
-  api: ApiService;
-  rootStore: RootStore;
 
-  constructor(rootStore: RootStore, api: ApiService) {
+  constructor() {
     makeObservable(this, {
       init: action,
       moneyTransaction: action,
@@ -20,8 +18,6 @@ export class ShopStore {
     });
     this.vendingMachineStore = new VendingMachineStore(this);
     this.userStore = new UserStore(this);
-    this.api = api;
-    this.rootStore = rootStore;
   }
 
   prepareProducts(products: ShopProducts): ShopSelectableProducts {
@@ -33,19 +29,19 @@ export class ShopStore {
   }
   async init() {
     try {
-      const [shopWallet, userWallet, products, shopMoneyReceiverWallet, userProducts] = await Promise.all([
-        this.api.getShopWallet(),
-        this.api.getUserWallet(),
-        this.api.getShopProducts(),
-        this.api.getReceiverWallet(),
-        this.api.getUserProducts(),
-      ]);
+      // const [shopWallet, userWallet, products, shopMoneyReceiverWallet, userProducts] = await Promise.all([
+      //   this.api.getShopWallet(),
+      //   this.api.getUserWallet(),
+      //   this.api.getShopProducts(),
+      //   this.api.getReceiverWallet(),
+      //   this.api.getUserProducts(),
+      // ]);
       runInAction(() => {
-        this.vendingMachineStore.shopWallet = shopWallet;
-        this.vendingMachineStore.shopProducts = this.prepareProducts(products);
-        this.vendingMachineStore.receiverWallet = shopMoneyReceiverWallet;
-        this.userStore.userWallet = userWallet;
-        this.userStore.userProducts = userProducts;
+        this.vendingMachineStore.shopWallet = new Map([]);
+        this.vendingMachineStore.shopProducts = new Map([]);
+        this.vendingMachineStore.receiverWallet = new Map([]);
+        this.userStore.userWallet = new Map([]);
+        this.userStore.userProducts = new Map([]);
       });
     } catch (e) {
       console.log(e);

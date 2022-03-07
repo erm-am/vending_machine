@@ -1,4 +1,3 @@
-import { VendingMachine } from "./../../pages/VendingMachine/index";
 import { ShopStore } from "./index";
 import { makeObservable, observable, computed, action, toJS, runInAction } from "mobx";
 import { Wallet, Money, UserProducts } from "../../types/stores";
@@ -29,7 +28,6 @@ class Products {
 
 class Cash {
   //monney
-
   private money: Map<number, number>;
   getCount(moneyId: number): number {
     return this.money.get(moneyId) ?? 0;
@@ -37,7 +35,6 @@ class Cash {
   }
 
   withdraw(moneyId: number, count: number): number {
-    //hasMoneyAvailable !
     const currentMoney = this.getCount(moneyId);
     const result = Math.max(0, currentMoney - count);
     this.money.set(moneyId, result);

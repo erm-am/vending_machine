@@ -1,4 +1,4 @@
-import { Money } from "./../../types/stores";
+import { Money } from "../../types/stores";
 import { IRow } from "../../components/core/Grid";
 import { Wallet } from "../../types/stores";
 

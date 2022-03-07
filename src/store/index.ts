@@ -1,14 +1,20 @@
-import { ShopStore } from "./shop";
-import { ApiService } from "../api";
+import { VendingMachine, User } from "./VendingMachine";
 
-export class RootStore {
-  shop: ShopStore;
-  api: ApiService;
-  constructor(api: ApiService) {
-    this.api = api;
-    this.shop = new ShopStore(this, api);
-  }
-}
-//ui  add() => объект с функции => mobx
+const vending = new VendingMachine();
+const user = new User();
+export const stores = {
+  vending,
+  user,
+};
 
-export const store = new RootStore(new ApiService());
+const actions = {
+  cashInsert: function cashInsert({ user, moneyId, vending }: { user: User; moneyId: number; vending: VendingMachine }) {
+    // if (user.hasMoneyAvailable(moneyId)) {
+    //   user.withdrawMoney(moneyId); //снимает деньги
+    //   vending.getDepositedMoney().deposit(moneyId, 1); // Закидываем в монетоприемник
+    //   //
+    // } else {
+    //   throw new Error("нет денег");
+    // }
+  },
+};
