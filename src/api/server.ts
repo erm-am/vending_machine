@@ -80,7 +80,7 @@ export const initServer = () => {
   ]; // id_продукта + количество
 
   const worker = setupWorker(
-    rest.get("/getCatalogue", (req, res, ctx) => res(ctx.json(catalogue))),
+    rest.get("/catalogue", (req, res, ctx) => res(ctx.json(catalogue))),
     rest.get("/userWallet", (req, res, ctx) => res(ctx.json(userWallet))),
     rest.get("/shopWallet", (req, res, ctx) => res(ctx.json(shopWallet))),
     rest.get("/receiverWallet", (req, res, ctx) => res(ctx.json(receiverWallet))),

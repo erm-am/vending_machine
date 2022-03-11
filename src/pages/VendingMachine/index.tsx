@@ -18,14 +18,14 @@ export const VendingMachine: React.FC = observer((props) => {
       <VendingSection>
         <Limiter direction="row">
           <ShopProducts />
-          {/* <ReceiverWallet /> */}
+          <ReceiverWallet />
         </Limiter>
       </VendingSection>
 
       <UserSection>
         <Limiter direction="row">
-          {/* <UserProducts /> */}
-          {/* <UserWallet /> */}
+          <UserProducts />
+          <UserWallet />
         </Limiter>
       </UserSection>
     </Shop>

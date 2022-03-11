@@ -13,8 +13,8 @@ export const ReceiverWallet: React.FC = observer(() => {
     { key: "receiverWalletCount", title: "Монетоприемник (кол-во)" },
     { key: "shopWalletCount", title: "Касса автомата (кол-во)" },
   ];
-  const handleClickBuy = () => shopService.buy();
-  const handleClickRefund = () => shopService.refund();
+  // const handleClickBuy = () => shopService.buy();
+  // const handleClickRefund = () => shopService.refund();
 
   return (
     <Container>
@@ -35,33 +35,25 @@ export const ReceiverWallet: React.FC = observer(() => {
       </GridContainer>
       <TotalOrder />
       <TotalReceiverMoney />
-      <Action disabled={!vending.totalReceiverMoney} onClick={handleClickRefund}>
+      {/* <Action disabled={!vending.totalReceiverMoney} onClick={handleClickRefund}>
         Забрать деньги
       </Action>
 
       <Action disabled={!vending.canBuy} onClick={handleClickBuy}>
         Купить
-      </Action>
+      </Action> */}
     </Container>
   );
 });
 
 const TotalOrder = observer(() => {
   const { vending } = useStore();
-  return (
-    <StyledAmount>
-      Сумма к оплате:&nbsp;<b>{vending.totalOrder} руб.</b>
-    </StyledAmount>
-  );
+  return <StyledAmount>{/* Сумма к оплате:&nbsp;<b>{vending.totalOrder} руб.</b> */}</StyledAmount>;
 });
 
 const TotalReceiverMoney = observer(() => {
   const { vending } = useStore();
-  return (
-    <StyledAmount>
-      Сумма в монетоприемнике:&nbsp;<b>{vending.totalReceiverMoney} руб.</b>
-    </StyledAmount>
-  );
+  return <StyledAmount>{/* Сумма в монетоприемнике:&nbsp;<b>{vending.totalReceiverMoney} руб.</b> */}</StyledAmount>;
 });
 
 const Container = styled.div`

@@ -15,14 +15,15 @@ import { IShopProduct, IUserProduct } from "../types/stores";
 // [{ id: 1, count: 2 }, { id: 2, count: 1 }]
 
 class Products {
-  products: IShopProduct[] | IUserProduct[] = [];
+  products: Map<number, number> = new Map();
   constructor() {
     makeAutoObservable(this);
   }
 
   // Существует ли продукт
-  hasProduct(productId: number): boolean {
-    return !!this.products.find((product) => product.id === productId);
+  hasProduct(productId: number): any {
+    return this.products.has(productId);
+    //return !!this.products.find((product) => product.id === productId);
   }
 
   // Существует ли нужное кол-во продукта
@@ -32,24 +33,22 @@ class Products {
 
   // Получить количество продукта
   getCount(productId: number): number {
-    const foundProduct = this.products.find((product) => product.id === productId);
-    //@ts-ignore
-    return foundProduct.count - foundProduct.reserved ?? 0;
+    return this.products.get(productId) ?? 0;
   }
 
-  // Получить количество зарезервированного продукта
-  getReservedCount(productId: number): number {
-    //@ts-ignore
-    return this.products.find((product) => product.id === productId)?.reserved ?? 0;
+  //  Добавляем продукт в резерв
+  addProductReserve(productId: number, count: number) {
+    this.products.set(productId, this.getCount(productId) + count);
   }
 
-  hasReservedCount(productId: number, count: number): boolean {
-    return this.getReservedCount(productId) === count;
+  //  Удаляем продукт из резверва
+  removeProductReserve(productId: number, count: number) {
+    this.products.set(productId, this.getCount(productId) - count);
   }
 
   //Вставляем продукты (инициализация данных с сервера)
-  setProducts(products: IUserProduct[] | IShopProduct[]) {
-    this.products = products;
+  setProducts(products: [number, number][]) {
+    this.products = new Map(products);
   }
 }
 
@@ -137,102 +136,54 @@ class Catalogue {
   }
 }
 export class VendingMachine {
-  catalogue: Catalogue;
+  catalogue: IProduct[];
   shopProducts: Products;
+  reservedProducts: Products;
   shopWallet: Wallet;
   receiverWallet: Wallet;
-
   constructor() {
-    makeAutoObservable(this);
-    this.catalogue = new Catalogue();
+    this.catalogue = [];
     this.shopProducts = new Products();
+    this.reservedProducts = new Products();
     this.shopWallet = new Wallet();
     this.receiverWallet = new Wallet();
+    makeAutoObservable(this);
   }
 
-  hasReceiverMoneyAvailable(moneyId: Money): boolean {
-    return this.receiverWallet.getCount(moneyId) > 0;
+  // Есть ли товар в нужном кол-ве (исключаем зарезервированные)
+  hasAvailableProduct(productId: number, count: number): boolean {
+    const productCount = this.shopProducts.getCount(productId);
+    const reservedProductCount = this.reservedProducts.getCount(productId);
+    return productCount - reservedProductCount >= count;
+  }
+  // Есть ли зарезервированный товар в нужном кол-ве
+  hasReservedProduct(productId: number, count: number): boolean {
+    return this.reservedProducts.hasCount(productId, count);
   }
 
-  hasProductAvailable(productId: number): boolean {
-    return this.shopProducts.getCount(productId) > 0;
+  // Добавить продукт в список резервов
+  addProductReserve(productId: number, count: number) {
+    this.reservedProducts.addProductReserve(productId, count);
   }
-  hasReservedProductAvailable(productId: number): boolean {
-    return this.shopProducts.getReservedCount(productId) > 0;
-  }
-
-  // зарезервировать товар
-  addProductReserve(productId) {
-    this.shopProducts.products = this.shopProducts.products.map((product) => {
-      return product.id === productId ? { ...product, reserved: product.reserved + 1 } : product;
-    });
+  // Убрать продукт из списка резервов
+  removeProductReserve(productId: number, count: number) {
+    this.reservedProducts.removeProductReserve(productId, count);
   }
 
-  // Снять с резервации
-  removeProductReserve(productId) {
-    this.shopProducts.products = this.shopProducts.products.map((product) => {
-      return product.id === productId ? { ...product, reserved: product.reserved - 1 } : product;
-    });
-  }
-
-  //положить деньиг в монетоприемник
   depositMoneyToReceiver(moneyId: Money, count: number) {
     this.receiverWallet.deposit(moneyId, count);
   }
-
-  //Забрать все зарезервированные продукты
-  takeReservedProducts() {
-    //РАЗБИТЬ НА 3 МЕТОДА
-    const products = [];
-    this.shopProducts.products.forEach((product: IShopProduct) => {
-      const reservedCount = product.reserved;
-      product.count = product.count - reservedCount;
-      product.reserved = 0;
-    });
-    return products;
-  }
-
-  //Снять все деньиг из монетоприемника
-  withdrawAllMoneyFromReceiver() {
-    const withdrawedMoney = new Map();
-    for (let [moneyId, count] of this.receiverWallet.money) {
-      this.receiverWallet.withdraw(moneyId, count);
-      if (withdrawedMoney.has(moneyId)) {
-        withdrawedMoney.set(moneyId, withdrawedMoney.get(moneyId) + count);
-      } else {
-        withdrawedMoney.set(moneyId, count);
-      }
-    }
-    return withdrawedMoney;
-  }
-
   async loadServerData() {
-    const [catalogue, shopWallet, receiverWallet, shopProducts] = await Promise.all([
+    const [catalogue, shopProducts, shopWallet, receiverWallet] = await Promise.all([
       api.getCatalogue(),
+      api.getShopProducts(),
       api.getShopWallet(),
       api.getReceiverWallet(),
-      api.getShopProducts(),
     ]);
+    console.log("!!!!", catalogue);
+    this.catalogue = catalogue;
     this.shopProducts.setProducts(shopProducts);
     this.shopWallet.setMoney(shopWallet);
     this.receiverWallet.setMoney(receiverWallet);
-    this.catalogue.setProducts(catalogue);
-  }
-
-  get totalReceiverMoney() {
-    return this.receiverWallet.total;
-  }
-
-  get totalOrder() {
-    //@ts-ignore
-    return this.shopProducts.products.reduce((result, current) => {
-      //@ts-ignore
-      return result + current.price * current.reserved;
-      //@ts-ignore
-    }, 0);
-  }
-  get canBuy() {
-    //@ts-ignore
-    return this.totalReceiverMoney >= this.totalOrder && this.totalOrder > 0 && this.totalReceiverMoney > 0;
   }
 }

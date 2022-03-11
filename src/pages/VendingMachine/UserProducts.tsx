@@ -5,16 +5,18 @@ import styled from "styled-components";
 import { Button } from "../../components/core/Button";
 import { Product } from "../../components/Product";
 export const UserProducts: React.FC = observer((props) => {
-  const { user } = useStore();
+  const { user, vending } = useStore();
   return (
     <Container>
       <Title>Продукты пользователя (readonly)</Title>
       <Products>
-        {user.userProducts.products.map((product) => {
+        {vending.catalogue.map((product) => {
+          const productId = product.id;
+          const productCount = user.userProducts.products.get(productId);
           return (
-            <Product key={product.id} disabled={!!product.count}>
+            <Product key={product.id} disabled={!!productCount}>
               <Label>{product.name}</Label>
-              <Label>{product.count} (шт.)</Label>
+              <Label>{productCount} (шт.)</Label>
             </Product>
           );
         })}
@@ -26,7 +28,6 @@ export const UserProducts: React.FC = observer((props) => {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-
   flex: 1;
   height: 100%;
 `;

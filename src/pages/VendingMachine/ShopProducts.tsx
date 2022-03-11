@@ -5,8 +5,10 @@ import styled from "styled-components";
 import { Button } from "../../components/core/Button";
 import { Product } from "../../components/Product";
 import { shopService } from "../../store/index";
+
 export const ShopProducts: React.FC = observer(() => {
   const { vending } = useStore();
+
   const handleClickAddProductReserve = (productId: number) => {
     shopService.addProductReserve(productId);
   };
@@ -18,16 +20,19 @@ export const ShopProducts: React.FC = observer(() => {
     <Container>
       <Title>Продукты торгового автомата</Title>
       <Products>
-        {vending.shopProducts.products.map((product) => {
+        {vending.catalogue.map((product) => {
+          const productId = product.id;
+          const productCount = vending.shopProducts.products.get(productId);
+          const reservedProductCount = vending.reservedProducts.products.get(productId) ?? 0;
           return (
-            <Product key={product.id} disabled={!product.count}>
+            <Product key={product.id} disabled={!productCount}>
               <Label>{product.name}</Label>
               <Label>
-                <Button onClick={() => handleClickRemoveProductReserve(product.id)} disabled={!product.count}>
+                <Button onClick={() => handleClickRemoveProductReserve(product.id)} disabled={!productCount}>
                   -
                 </Button>
-                {product.reserved}\{product.count}
-                <Button onClick={() => handleClickAddProductReserve(product.id)} disabled={!product.count}>
+                {reservedProductCount}\{productCount}
+                <Button onClick={() => handleClickAddProductReserve(product.id)} disabled={!productCount}>
                   +
                 </Button>
               </Label>
