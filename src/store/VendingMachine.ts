@@ -1,11 +1,21 @@
-import { Money } from "./../types/stores";
+import { IProduct, Money } from "./../types/stores";
 import { getUserProducts } from "./../api/index";
 import { makeObservable, observable, computed, action, toJS, runInAction, makeAutoObservable } from "mobx";
 import * as api from "../api";
 import { IShopProduct, IUserProduct } from "../types/stores";
 
+// catalogue: Map<id, IProduct>
+// shopProducts: Map<id, count>
+// userProducts: Map<id, count>
+// const productId = 1
+// const count = shopProducts.get(productId)
+// const product = catalogue.get(productId)
+// const productsMap = Map.fromEntries(products.map(p => [p.id, p]))
+// const productsMap = new Map(products.map(p => [p.id, p]))
+// [{ id: 1, count: 2 }, { id: 2, count: 1 }]
+
 class Products {
-  products: IUserProduct[] | IShopProduct[] = [];
+  products: IShopProduct[] | IUserProduct[] = [];
   constructor() {
     makeAutoObservable(this);
   }
@@ -29,8 +39,6 @@ class Products {
 
   // Получить количество зарезервированного продукта
   getReservedCount(productId: number): number {
-    console.log("@@@@@@@@@@", this.products);
-
     //@ts-ignore
     return this.products.find((product) => product.id === productId)?.reserved ?? 0;
   }
@@ -40,7 +48,7 @@ class Products {
   }
 
   //Вставляем продукты (инициализация данных с сервера)
-  initProducts(products: IUserProduct[] | IShopProduct[]) {
+  setProducts(products: IUserProduct[] | IShopProduct[]) {
     this.products = products;
   }
 }
@@ -74,7 +82,7 @@ class Wallet {
     const newValue = currentMoneyCount + count;
     this.money.set(moneyId, newValue);
   }
-  initMoney(money: [Money, number][]) {
+  setMoney(money: [Money, number][]) {
     this.money = new Map(money);
   }
 
@@ -84,6 +92,7 @@ class Wallet {
 }
 
 export class User {
+  catalogue: Catalogue;
   userWallet: Wallet;
   userProducts: Products;
 
@@ -91,6 +100,7 @@ export class User {
     makeAutoObservable(this);
     this.userWallet = new Wallet();
     this.userProducts = new Products();
+    this.catalogue = new Catalogue();
   }
 
   withdrawMoney(moneyId: Money, count: number) {
@@ -113,18 +123,28 @@ export class User {
   }
 
   async loadServerData() {
-    const [userWallet, userProducts] = await Promise.all([api.getUserWallet(), api.getUserProducts()]);
-    this.userProducts.initProducts(userProducts);
-    this.userWallet.initMoney(userWallet);
+    const [catalogue, userWallet, userProducts] = await Promise.all([api.getCatalogue(), api.getUserWallet(), api.getUserProducts()]);
+    this.catalogue.setProducts(catalogue);
+    this.userProducts.setProducts(userProducts);
+    this.userWallet.setMoney(userWallet);
   }
 }
 
+class Catalogue {
+  products: IProduct[];
+  setProducts(products: IProduct[]) {
+    this.products = products;
+  }
+}
 export class VendingMachine {
+  catalogue: Catalogue;
   shopProducts: Products;
   shopWallet: Wallet;
   receiverWallet: Wallet;
+
   constructor() {
     makeAutoObservable(this);
+    this.catalogue = new Catalogue();
     this.shopProducts = new Products();
     this.shopWallet = new Wallet();
     this.receiverWallet = new Wallet();
@@ -160,6 +180,18 @@ export class VendingMachine {
     this.receiverWallet.deposit(moneyId, count);
   }
 
+  //Забрать все зарезервированные продукты
+  takeReservedProducts() {
+    //РАЗБИТЬ НА 3 МЕТОДА
+    const products = [];
+    this.shopProducts.products.forEach((product: IShopProduct) => {
+      const reservedCount = product.reserved;
+      product.count = product.count - reservedCount;
+      product.reserved = 0;
+    });
+    return products;
+  }
+
   //Снять все деньиг из монетоприемника
   withdrawAllMoneyFromReceiver() {
     const withdrawedMoney = new Map();
@@ -175,27 +207,18 @@ export class VendingMachine {
   }
 
   async loadServerData() {
-    const [shopWallet, receiverWallet, shopProducts] = await Promise.all([api.getShopWallet(), api.getReceiverWallet(), api.getShopProducts()]);
-    this.shopProducts.initProducts(shopProducts);
-    this.shopWallet.initMoney(shopWallet);
-    this.receiverWallet.initMoney(receiverWallet);
+    const [catalogue, shopWallet, receiverWallet, shopProducts] = await Promise.all([
+      api.getCatalogue(),
+      api.getShopWallet(),
+      api.getReceiverWallet(),
+      api.getShopProducts(),
+    ]);
+    this.shopProducts.setProducts(shopProducts);
+    this.shopWallet.setMoney(shopWallet);
+    this.receiverWallet.setMoney(receiverWallet);
+    this.catalogue.setProducts(catalogue);
   }
-  get combinedWallets() {
-    const receiverWalletArray = Array.from(this.receiverWallet.money);
-    const shopWalletArray = Array.from(this.shopWallet.money);
-    const combinedWallets = Array.from({
-      length: receiverWalletArray.length,
-    }).map((_, index) => {
-      const [moneyId, receiverWalletMoneyCount] = receiverWalletArray[index];
-      const [, shopWalletMoneyCount] = shopWalletArray[index];
-      return {
-        moneyId,
-        receiverWalletMoneyCount,
-        shopWalletMoneyCount,
-      };
-    });
-    return combinedWallets;
-  }
+
   get totalReceiverMoney() {
     return this.receiverWallet.total;
   }

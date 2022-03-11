@@ -3,6 +3,7 @@ import { VendingMachine, User } from "./VendingMachine";
 
 const vending = new VendingMachine();
 const user = new User();
+// const shop = new Shop(vending, user);
 export const stores = {
   vending,
   user,
@@ -10,7 +11,7 @@ export const stores = {
 
 // Тут будут все действия по проекту (снять деньги, вставить, забрать товар, отдать товар итд)
 const shopActions = {
-  cashInsert: function cashInsert({ user, moneyId, vending }: { user: User; moneyId: Money; vending: VendingMachine }) {
+  cashInsert({ user, moneyId, vending }: { user: User; moneyId: Money; vending: VendingMachine }) {
     if (user.hasMoneyAvailable(moneyId)) {
       user.withdrawMoney(moneyId, 1); // Снимает деньги у пользователя (1 шт) (добавить проверку)
       vending.depositMoneyToReceiver(moneyId, 1); // Закидываем в монетоприемник (1 шт)
@@ -18,7 +19,7 @@ const shopActions = {
       throw new Error("В кошельке пользователя нет денег");
     }
   },
-  refund: function refundMoney({ vending, user }: { vending: VendingMachine; user: User }) {
+  refund({ vending, user }: { vending: VendingMachine; user: User }) {
     if (vending.receiverWallet.hasMoney()) {
       const withdrawedMoney = vending.withdrawAllMoneyFromReceiver(); // снять деньги с монетоприемника + получаем их
       user.depositAllMoneyToUser(withdrawedMoney); // Запихнуть  деньги в кошелек пользователя
@@ -26,7 +27,7 @@ const shopActions = {
       throw new Error("В монетоприемнике нет денег");
     }
   },
-  addProductReserve: function addProductReserve({ productId, vending }: { productId: number; vending: VendingMachine }) {
+  addProductReserve({ productId, vending }: { productId: number; vending: VendingMachine }) {
     if (vending.hasProductAvailable(productId)) {
       vending.addProductReserve(productId); // зарезервировать товар
     } else {
@@ -34,7 +35,7 @@ const shopActions = {
     }
     //
   },
-  removeProductReserve: function removeProductReserve({ productId, vending }: { productId: number; vending: VendingMachine }) {
+  removeProductReserve({ productId, vending }: { productId: number; vending: VendingMachine }) {
     if (vending.hasReservedProductAvailable(productId)) {
       vending.removeProductReserve(productId); // Снять резерв
     } else {
@@ -43,11 +44,11 @@ const shopActions = {
     //
   },
 
-  buy: function buy({ user, vending }: { user: User; vending: VendingMachine }) {
-    //@ts-ignore
+  buy({ user, vending }: { user: User; vending: VendingMachine }) {
     if (vending.canBuy) {
       console.log("buying");
       //алгоритм покупки товара
+      const products = vending.takeReservedProducts();
       // const withdrawedReservedProducts  = vending.withdrawReservedProducts();
       // const withdrawedReservedProducts  = vending.withdrawReservedProducts();
     } else {

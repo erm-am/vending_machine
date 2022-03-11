@@ -4,14 +4,14 @@ import { useStore } from "../../hooks/useStore";
 import styled from "styled-components";
 import { Button } from "../../components/core/Button";
 import { Grid } from "../../components/core/Grid";
+import { Row, Cell } from "../../components/core/Grid/Grid.styled";
 import { shopService } from "../../store/index";
 export const ReceiverWallet: React.FC = observer(() => {
   const { vending } = useStore();
-
   const gridColumns = [
     { key: "moneyId", title: "Наименование", renderer: (value) => `${value} руб.` },
-    { key: "receiverWalletMoneyCount", title: "Монетоприемник (кол-во)" },
-    { key: "shopWalletMoneyCount", title: "Касса автомата (кол-во)" },
+    { key: "receiverWalletCount", title: "Монетоприемник (кол-во)" },
+    { key: "shopWalletCount", title: "Касса автомата (кол-во)" },
   ];
   const handleClickBuy = () => shopService.buy();
   const handleClickRefund = () => shopService.refund();
@@ -20,7 +20,18 @@ export const ReceiverWallet: React.FC = observer(() => {
     <Container>
       <Title>Касса торгового автомата</Title>
       <GridContainer>
-        <Grid rows={vending.combinedWallets} columns={gridColumns} />
+        <Grid columns={gridColumns}>
+          {Array.from(vending.receiverWallet.money).map(([productId, receiverWalletCount]) => {
+            const shopWalletCount = vending.shopWallet.money.get(productId);
+            return (
+              <Row key={productId}>
+                <Cell>{productId}</Cell>
+                <Cell>{receiverWalletCount}</Cell>
+                <Cell>{shopWalletCount}</Cell>
+              </Row>
+            );
+          })}
+        </Grid>
       </GridContainer>
       <TotalOrder />
       <TotalReceiverMoney />

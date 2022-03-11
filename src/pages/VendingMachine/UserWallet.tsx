@@ -12,7 +12,7 @@ export const UserWallet: React.FC = observer((props) => {
     <Container>
       <Title>Деньги пользователя</Title>
       <Wallet>
-        {Array.from(user.userWallet.money).map(([moneyId, currentQty]) => {
+        {Array.from(user.userWallet.money.entries()).map(([moneyId, currentQty]) => {
           return (
             <Money disabled={!currentQty} key={moneyId} onClick={() => shopService.cashInsert(moneyId)}>
               <MoneyCaption>{moneyId} руб</MoneyCaption>
