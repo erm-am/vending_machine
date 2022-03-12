@@ -3,13 +3,12 @@ import { VendingMachine, User } from "./VendingMachine";
 
 const vending = new VendingMachine();
 const user = new User();
-// const shop = new Shop(vending, user);
+
 export const stores = {
   vending,
   user,
 };
 
-// Тут будут все действия по проекту (снять деньги, вставить, забрать товар, отдать товар итд)
 const shopActions = {
   cashInsert({ user, moneyId, vending }: { user: User; moneyId: Money; vending: VendingMachine }) {
     if (user.hasMoneyAvailable(moneyId)) {
@@ -19,21 +18,20 @@ const shopActions = {
       throw new Error("В кошельке пользователя нет денег");
     }
   },
-  // refund({ vending, user }: { vending: VendingMachine; user: User }) {
-  //   if (vending.receiverWallet.hasMoney()) {
-  //     const withdrawedMoney = vending.withdrawAllMoneyFromReceiver(); // снять деньги с монетоприемника + получаем их
-  //     user.depositAllMoneyToUser(withdrawedMoney); // Запихнуть  деньги в кошелек пользователя
-  //   } else {
-  //     throw new Error("В монетоприемнике нет денег");
-  //   }
-  // },
+  refund({ vending, user }: { vending: VendingMachine; user: User }) {
+    if (vending.receiverWallet.hasMoney()) {
+      const withdrawedMoney = vending.bulkWithdrawMoneyFromReceiver(); // снять деньги с монетоприемника + получаем их
+      user.bulkDepositMoney(withdrawedMoney); // Запихнуть  деньги в кошелек пользователя
+    } else {
+      throw new Error("В монетоприемнике нет денег");
+    }
+  },
   addProductReserve({ productId, vending }: { productId: number; vending: VendingMachine }) {
     if (vending.hasAvailableProduct(productId, 1)) {
       vending.addProductReserve(productId, 1);
     } else {
       throw new Error(`Нет возможности зарезервировать продукт c id ${productId} `);
     }
-    //
   },
   removeProductReserve({ productId, vending }: { productId: number; vending: VendingMachine }) {
     if (vending.hasReservedProduct(productId, 1)) {
@@ -43,23 +41,25 @@ const shopActions = {
     }
   },
 
-  // buy({ user, vending }: { user: User; vending: VendingMachine }) {
-  //   if (vending.canBuy) {
-  //     console.log("buying");
-  //     //алгоритм покупки товара
-  //     const products = vending.takeReservedProducts();
-  //     // const withdrawedReservedProducts  = vending.withdrawReservedProducts();
-  //     // const withdrawedReservedProducts  = vending.withdrawReservedProducts();
-  //   } else {
-  //     throw new Error(`Нет нужного кол-ва денег в монетоприемнике`);
-  //   }
-  // },
+  buy({ user, vending }: { user: User; vending: VendingMachine }) {
+    if (vending.canBuy) {
+      const totalChangeForUser = vending.calculateChangeValue();
+      vending.transferMoneyFromReceiverToShop();
+      const changeWallet = vending.getChange(totalChangeForUser);
+      const withdrawedMoney = vending.bulkWithdrawMoneyFromShop(changeWallet);
+      user.bulkDepositMoney(withdrawedMoney);
+      const reservedProducts = vending.withdrawProducts();
+      user.bulkDepositProducts(reservedProducts);
+    } else {
+      throw new Error(`Нет нужного кол-ва денег в монетоприемнике`);
+    }
+  },
 };
 
 export const shopService = {
   cashInsert: (moneyId: Money) => shopActions.cashInsert({ user, moneyId, vending }), // Пользователь вставляет деньги
-  // refund: () => shopActions.refund({ vending, user }), // Забираем бабки из монетоприемника
+  refund: () => shopActions.refund({ vending, user }), // Забираем деньги из монетоприемника
   addProductReserve: (productId: number) => shopActions.addProductReserve({ productId, vending }), // Резервируем продукт
   removeProductReserve: (productId: number) => shopActions.removeProductReserve({ productId, vending }), // снимаем продукт с резерва
-  // // buy: () => shopActions.buy({ user, vending }), // подтверждаем покупку
+  buy: () => shopActions.buy({ user, vending }), //покупаем
 };

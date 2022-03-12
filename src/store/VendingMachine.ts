@@ -1,18 +1,6 @@
-import { IProduct, Money } from "./../types/stores";
-import { getUserProducts } from "./../api/index";
-import { makeObservable, observable, computed, action, toJS, runInAction, makeAutoObservable } from "mobx";
+import { IProduct, Money, MoneyWallet } from "./../types/stores";
+import { makeAutoObservable } from "mobx";
 import * as api from "../api";
-import { IShopProduct, IUserProduct } from "../types/stores";
-
-// catalogue: Map<id, IProduct>
-// shopProducts: Map<id, count>
-// userProducts: Map<id, count>
-// const productId = 1
-// const count = shopProducts.get(productId)
-// const product = catalogue.get(productId)
-// const productsMap = Map.fromEntries(products.map(p => [p.id, p]))
-// const productsMap = new Map(products.map(p => [p.id, p]))
-// [{ id: 1, count: 2 }, { id: 2, count: 1 }]
 
 class Products {
   products: Map<number, number> = new Map();
@@ -20,67 +8,61 @@ class Products {
     makeAutoObservable(this);
   }
 
-  // Существует ли продукт
   hasProduct(productId: number): any {
     return this.products.has(productId);
-    //return !!this.products.find((product) => product.id === productId);
   }
 
-  // Существует ли нужное кол-во продукта
   hasCount(productId: number, count: number): boolean {
     return this.getCount(productId) >= count;
   }
 
-  // Получить количество продукта
   getCount(productId: number): number {
     return this.products.get(productId) ?? 0;
   }
 
-  //  Добавляем продукт в резерв
-  addProductReserve(productId: number, count: number) {
+  addProduct(productId: number, count: number) {
     this.products.set(productId, this.getCount(productId) + count);
   }
 
-  //  Удаляем продукт из резверва
-  removeProductReserve(productId: number, count: number) {
+  removeProduct(productId: number, count: number) {
     this.products.set(productId, this.getCount(productId) - count);
   }
 
-  //Вставляем продукты (инициализация данных с сервера)
   setProducts(products: [number, number][]) {
     this.products = new Map(products);
+  }
+
+  clear() {
+    this.products = new Map();
   }
 }
 
 class Wallet {
-  money: Map<Money, number> = new Map();
+  money: MoneyWallet = new Map();
   constructor() {
     makeAutoObservable(this);
   }
 
-  // Количество определенной купюры
   getCount(moneyId: Money): number {
     return this.money.get(moneyId) ?? 0;
   }
 
-  // Есть ли хоть какие-нибудь деньги
   hasMoney(): boolean {
     return Array.from(this.money).some(([moneyId, count]) => count > 0);
   }
 
-  // Забрать
   withdraw(moneyId: Money, count: number) {
     const currentMoneyCount = this.getCount(moneyId);
     const newValue = currentMoneyCount - count;
     this.money.set(moneyId, newValue);
   }
 
-  // Положить
   deposit(moneyId: Money, count: number) {
     const currentMoneyCount = this.getCount(moneyId);
     const newValue = currentMoneyCount + count;
     this.money.set(moneyId, newValue);
   }
+
   setMoney(money: [Money, number][]) {
     this.money = new Map(money);
   }
@@ -91,7 +73,6 @@ class Wallet {
 }
 
 export class User {
-  catalogue: Catalogue;
   userWallet: Wallet;
   userProducts: Products;
 
@@ -99,42 +80,42 @@ export class User {
     makeAutoObservable(this);
     this.userWallet = new Wallet();
     this.userProducts = new Products();
-    this.catalogue = new Catalogue();
   }
 
+  // Снять деньги
   withdrawMoney(moneyId: Money, count: number) {
     if (this.hasMoneyAvailable(moneyId)) {
       this.userWallet.withdraw(moneyId, count);
     }
   }
+  // Положить деньги
   depositMoney(moneyId: Money, count: number) {
     this.userWallet.deposit(moneyId, count);
   }
-
+  // Есть ли деньги данной купюры
   hasMoneyAvailable(moneyId: Money) {
     return this.userWallet.getCount(moneyId) > 0;
   }
 
-  depositAllMoneyToUser(money: Map<Money, number>) {
+  // положить несколько видов купюр на счет
+  bulkDepositMoney(money: MoneyWallet) {
     for (let [moneyId, count] of money) {
       this.depositMoney(moneyId, count);
     }
   }
 
+  bulkDepositProducts(products) {
+    for (let [id, count] of products) this.userProducts.addProduct(id, count);
+  }
+
   async loadServerData() {
     const [catalogue, userWallet, userProducts] = await Promise.all([api.getCatalogue(), api.getUserWallet(), api.getUserProducts()]);
-    this.catalogue.setProducts(catalogue);
+
     this.userProducts.setProducts(userProducts);
     this.userWallet.setMoney(userWallet);
   }
 }
 
-class Catalogue {
-  products: IProduct[];
-  setProducts(products: IProduct[]) {
-    this.products = products;
-  }
-}
 export class VendingMachine {
   catalogue: IProduct[];
   shopProducts: Products;
@@ -163,16 +144,94 @@ export class VendingMachine {
 
   // Добавить продукт в список резервов
   addProductReserve(productId: number, count: number) {
-    this.reservedProducts.addProductReserve(productId, count);
+    this.reservedProducts.addProduct(productId, count);
   }
   // Убрать продукт из списка резервов
   removeProductReserve(productId: number, count: number) {
-    this.reservedProducts.removeProductReserve(productId, count);
+    this.reservedProducts.removeProduct(productId, count);
   }
 
+  // Пополнить монетоприемник
   depositMoneyToReceiver(moneyId: Money, count: number) {
     this.receiverWallet.deposit(moneyId, count);
   }
+
+  // Забрать все деньги из монетоприемника
+  bulkWithdrawMoneyFromReceiver(): MoneyWallet {
+    const withdrawedMoney = new Map();
+    for (let [moneyId, count] of this.receiverWallet.money) {
+      this.receiverWallet.withdraw(moneyId, count);
+      if (withdrawedMoney.has(moneyId)) {
+        withdrawedMoney.set(moneyId, withdrawedMoney.get(moneyId) + count);
+      } else {
+        withdrawedMoney.set(moneyId, count);
+      }
+    }
+    return withdrawedMoney;
+  }
+
+  bulkWithdrawMoneyFromShop(money: MoneyWallet) {
+    const withdrawedMoney = new Map();
+    for (let [moneyId, count] of money) {
+      this.shopWallet.withdraw(moneyId, count);
+      if (withdrawedMoney.has(moneyId)) {
+        withdrawedMoney.set(moneyId, withdrawedMoney.get(moneyId) + count);
+      } else {
+        withdrawedMoney.set(moneyId, count);
+      }
+    }
+    return withdrawedMoney;
+  }
+
+  bulkDepositMoneyToShop(money: MoneyWallet) {
+    for (let [moneyId, count] of money) {
+      this.shopWallet.deposit(moneyId, count);
+    }
+  }
+
+  transferMoneyFromReceiverToShop() {
+    const withdrawedMoneyFromReceiver = this.bulkWithdrawMoneyFromReceiver();
+    this.bulkDepositMoneyToShop(withdrawedMoneyFromReceiver);
+  }
+
+  calculateChangeValue(): number {
+    const totalOrder = this.totalOrder;
+    const totalReceiverMoney = this.totalReceiverMoney;
+    const changeForUser = totalReceiverMoney - totalOrder;
+    return changeForUser;
+  }
+  getChange(changeForUser: number): MoneyWallet {
+    const userChange: MoneyWallet = new Map();
+    const shopWallet = this.shopWallet.money;
+    const sortedShopMoneyWallet = Array.from(shopWallet).sort(([left], [right]) => right - left); // Старшие монеты в приоритете
+
+    let restMoneyForChange = changeForUser;
+
+    while (restMoneyForChange !== 0) {
+      for (let [moneyId, qty] of sortedShopMoneyWallet) {
+        if (moneyId <= restMoneyForChange && qty) {
+          if (userChange.has(moneyId)) {
+            userChange.set(moneyId, userChange.get(moneyId) + 1);
+          } else {
+            userChange.set(moneyId, 1);
+          }
+          restMoneyForChange = restMoneyForChange - moneyId;
+          break;
+        }
+      }
+    }
+    return userChange;
+  }
+
+  withdrawProducts() {
+    const reservedProducts = this.reservedProducts.products;
+    this.reservedProducts.clear();
+    for (let [productId, count] of reservedProducts) {
+      this.shopProducts.removeProduct(productId, count);
+    }
+    return reservedProducts;
+  }
+
   async loadServerData() {
     const [catalogue, shopProducts, shopWallet, receiverWallet] = await Promise.all([
       api.getCatalogue(),
@@ -180,10 +239,25 @@ export class VendingMachine {
       api.getShopWallet(),
       api.getReceiverWallet(),
     ]);
-    console.log("!!!!", catalogue);
     this.catalogue = catalogue;
     this.shopProducts.setProducts(shopProducts);
     this.shopWallet.setMoney(shopWallet);
     this.receiverWallet.setMoney(receiverWallet);
+  }
+
+  get totalReceiverMoney() {
+    return this.receiverWallet.total;
+  }
+
+  get totalOrder() {
+    const catalogue = this.catalogue;
+    const reserverProducts = this.reservedProducts.products;
+    return Array.from(reserverProducts).reduce((result, [id, count]) => {
+      const { price } = catalogue.find((product) => product.id === id);
+      return result + price * count;
+    }, 0);
+  }
+  get canBuy() {
+    return this.totalReceiverMoney >= this.totalOrder && this.totalOrder > 0 && this.totalReceiverMoney > 0;
   }
 }
