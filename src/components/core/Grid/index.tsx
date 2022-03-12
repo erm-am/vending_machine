@@ -11,11 +11,12 @@ export interface IRow {
 }
 interface IGridProps {
   columns: IColumn[];
-  rows: IRow[];
+  rows?: IRow[];
 }
 
 export const Grid: React.FC<IGridProps> = (props) => {
   const { columns = [], rows = [] } = props;
+
   return (
     <Table>
       <Header>
@@ -26,15 +27,17 @@ export const Grid: React.FC<IGridProps> = (props) => {
         </Row>
       </Header>
       <Body>
-        {rows.map((row: IRow, index) => {
-          return (
-            <Row key={index}>
-              {columns.map((column) => (
-                <Cell key={column.key}>{column.renderer ? column.renderer(row[column.key]) : row[column.key]}</Cell>
-              ))}
-            </Row>
-          );
-        })}
+        {props.children ??
+          rows.map((row: IRow, index) => {
+            return (
+              <Row key={index}>
+                {columns.map((column) => (
+                  <Cell key={column.key}>{column.renderer ? column.renderer(row[column.key]) : row[column.key]}</Cell>
+                ))}
+              </Row>
+            );
+          })}
+        {}
       </Body>
     </Table>
   );

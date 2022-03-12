@@ -4,27 +4,39 @@ import { useStore } from "../../hooks/useStore";
 import styled from "styled-components";
 import { Button } from "../../components/core/Button";
 import { Product } from "../../components/Product";
+import { shopService } from "../../store/index";
 
-export const ShopProducts: React.FC = observer((props) => {
-  const { vendingMachineStore } = useStore().shop;
+export const ShopProducts: React.FC = observer(() => {
+  const { vending } = useStore();
+
+  const handleClickAddProductReserve = (productId: number) => {
+    shopService.addProductReserve(productId);
+  };
+  const handleClickRemoveProductReserve = (productId: number) => {
+    shopService.removeProductReserve(productId);
+  };
+
   return (
     <Container>
       <Title>Продукты торгового автомата</Title>
       <Products>
-        {Array.from(vendingMachineStore.shopProducts).map(([id, { name, amount, qty, selected, price }]) => {
+        {vending.catalogue.map((product) => {
+          const productId = product.id;
+          const productCount = vending.shopProducts.products.get(productId);
+          const reservedProductCount = vending.reservedProducts.products.get(productId) ?? 0;
           return (
-            <Product key={id} disabled={!qty}>
-              <Label>{name}</Label>
+            <Product key={product.id} disabled={!productCount}>
+              <Label>{product.name}</Label>
               <Label>
-                <Button onClick={() => vendingMachineStore.decProduct(id)} disabled={!qty}>
+                <Button onClick={() => handleClickRemoveProductReserve(product.id)} disabled={!productCount}>
                   -
                 </Button>
-                {selected}\{qty}
-                <Button onClick={() => vendingMachineStore.incProduct(id)} disabled={!qty}>
+                {reservedProductCount}\{productCount}
+                <Button onClick={() => handleClickAddProductReserve(product.id)} disabled={!productCount}>
                   +
                 </Button>
               </Label>
-              <Label>Цена: {price}</Label>
+              <Label>Цена: {product.price}</Label>
             </Product>
           );
         })}

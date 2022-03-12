@@ -1,77 +1,13 @@
-import { Wallet, UserProducts, ShopProducts } from "../types/stores";
+import { Money, IProduct } from "../types/stores";
 
-const userWalletFakeData: Wallet = new Map([
-  [1, 5],
-  [2, 5],
-  [5, 5],
-  [10, 5],
-  [50, 5],
-  [100, 5],
-  [200, 5],
-  [500, 5],
-  [1000, 5],
-]);
-const shopWalletFakeData: Wallet = new Map([
-  [1, 50],
-  [2, 50],
-  [5, 50],
-  [10, 50],
-  [50, 50],
-  [100, 50],
-  [200, 50],
-  [500, 50],
-  [1000, 50],
-]);
-const receiverWalletFakeData: Wallet = new Map([
-  [1, 0],
-  [2, 0],
-  [5, 0],
-  [10, 0],
-  [50, 0],
-  [100, 0],
-  [200, 0],
-  [500, 0],
-  [1000, 0],
-]);
+import { initServer } from "./server";
+initServer(); // fake server
 
-const shopProductsFakeData: ShopProducts = new Map([
-  [1, { qty: 20, price: 10, name: "Эспрессо" }],
-  [2, { qty: 20, price: 10, name: "Капучино" }],
-  [3, { qty: 20, price: 10, name: "Латте" }],
-  [4, { qty: 20, price: 10, name: "Черный чай" }],
-  [5, { qty: 20, price: 10, name: "Зеленый чай" }],
-  [6, { qty: 20, price: 10, name: "Coca-cola" }],
-  [7, { qty: 20, price: 10, name: "Fanta" }],
-  [8, { qty: 20, price: 10, name: "Pepsi" }],
-  [9, { qty: 20, price: 10, name: "Sprite" }],
-]);
+import { axiosInstance as api } from "./axios";
 
-const userProductsFakeData: UserProducts = new Map([
-  [1, { qty: 0, name: "Эспрессо" }],
-  [2, { qty: 0, name: "Капучино" }],
-  [3, { qty: 0, name: "Латте" }],
-  [4, { qty: 0, name: "Черный чай" }],
-  [5, { qty: 0, name: "Зеленый чай" }],
-  [6, { qty: 0, name: "Coca-cola" }],
-  [7, { qty: 0, name: "Fanta" }],
-  [8, { qty: 0, name: "Pepsi" }],
-  [9, { qty: 0, name: "Sprite" }],
-]);
-
-export class ApiService {
-  async getUserWallet() {
-    return userWalletFakeData;
-  }
-  async getShopWallet() {
-    return shopWalletFakeData;
-  }
-  async getShopProducts() {
-    return shopProductsFakeData;
-  }
-  async getUserProducts() {
-    return userProductsFakeData;
-  }
-  async getReceiverWallet() {
-    return receiverWalletFakeData;
-  }
-}
+export const getCatalogue = () => api.get<IProduct[], any>(`/catalogue`);
+export const getUserWallet = () => api.get<[Money, number][], any>(`/userWallet`);
+export const getShopWallet = () => api.get<[Money, number][], any>(`/shopWallet`);
+export const getReceiverWallet = () => api.get<[Money, number][], any>(`/receiverWallet`);
+export const getUserProducts = () => api.get<[number, number][], any>(`/userProducts`);
+export const getShopProducts = () => api.get<[number, number][], any>(`/shopProducts`);

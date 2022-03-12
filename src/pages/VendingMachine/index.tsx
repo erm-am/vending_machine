@@ -7,9 +7,11 @@ import { ShopProducts } from "./ShopProducts";
 import { UserProducts } from "./UserProducts";
 import styled from "styled-components";
 export const VendingMachine: React.FC = observer((props) => {
-  const { shop } = useStore();
+  const { vending, user } = useStore();
+
   useEffect(() => {
-    shop.init();
+    vending.loadServerData();
+    user.loadServerData();
   }, []);
   return (
     <Shop>

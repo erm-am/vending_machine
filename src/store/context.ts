@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
-import { store, RootStore } from "./index";
+import { VendingMachine, User } from "./VendingMachine";
+import { stores } from "./index";
 
-export const StoreContext = createContext<RootStore | null>(store);
+export const StoreContext = createContext<typeof stores | null>(null);
