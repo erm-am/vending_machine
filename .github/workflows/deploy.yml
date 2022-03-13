@@ -20,6 +20,7 @@ jobs:
       - run: chmod 600 "$HOME/.ssh/private_key"
       # Build
       - run: npm i
+      - run: npm run test
       - run: npm run build
       # Deploy
       - run: cd build && rsync -e "ssh -i $HOME/.ssh/private_key -o StrictHostKeyChecking=no" --archive --compress --delete . ${{ secrets.DEPLOY_SERVER_USER }}@${{ secrets.DEPLOY_SERVER_IP }}:/var/www/vending-machine.not-js.ru/
