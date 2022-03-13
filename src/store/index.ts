@@ -1,4 +1,4 @@
-import { Money } from "../types/stores";
+import { Money } from "../types";
 import { VendingMachine, User } from "./VendingMachine";
 
 const vending = new VendingMachine();
@@ -9,7 +9,7 @@ export const stores = {
   user,
 };
 
-const shopActions = {
+export const shopActions = {
   cashInsert({ user, moneyId, vending }: { user: User; moneyId: Money; vending: VendingMachine }) {
     if (user.hasMoneyAvailable(moneyId)) {
       user.withdrawMoney(moneyId, 1); // Снимает деньги у пользователя (1 шт) (добавить проверку)

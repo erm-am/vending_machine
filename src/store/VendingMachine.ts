@@ -1,8 +1,8 @@
-import { IProduct, Money, MoneyWallet } from "./../types/stores";
+import { IProduct, Money, MoneyWallet } from "../types";
 import { makeAutoObservable } from "mobx";
 import * as api from "../api";
 
-class Products {
+export class Products {
   products: Map<number, number> = new Map();
   constructor() {
     makeAutoObservable(this);
@@ -37,7 +37,7 @@ class Products {
   }
 }
 
-class Wallet {
+export class Wallet {
   money: MoneyWallet = new Map();
   constructor() {
     makeAutoObservable(this);
@@ -104,8 +104,10 @@ export class User {
     }
   }
 
-  bulkDepositProducts(products) {
-    for (let [id, count] of products) this.userProducts.addProduct(id, count);
+  bulkDepositProducts(products: Map<number, number>) {
+    for (let [id, count] of products) {
+      this.userProducts.addProduct(id, count);
+    }
   }
 
   async loadServerData() {

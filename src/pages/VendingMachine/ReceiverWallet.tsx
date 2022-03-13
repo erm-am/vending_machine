@@ -35,11 +35,9 @@ export const ReceiverWallet: React.FC = observer(() => {
       </GridContainer>
       <TotalOrder />
       <TotalReceiverMoney />
-
       <Action disabled={vending.totalReceiverMoney === 0} onClick={handleClickRefund}>
         Забрать деньги
       </Action>
-
       <Action disabled={!vending.canBuy} onClick={handleClickBuy}>
         Купить
       </Action>

@@ -1,7 +1,4 @@
-import { Money, IProduct } from "../types/stores";
-
-import { initServer } from "./server";
-initServer(); // fake server
+import { Money, IProduct } from "../types";
 
 import { axiosInstance as api } from "./axios";
 

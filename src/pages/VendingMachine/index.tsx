@@ -34,7 +34,6 @@ export const VendingMachine: React.FC = observer((props) => {
 
 const Shop = styled.div`
   display: flex;
-
   flex-direction: column;
   color: white;
   min-height: 100vh;

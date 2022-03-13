@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../../hooks/useStore";
 import styled, { css } from "styled-components";
 import { Button } from "../../components/core/Button";
-import { Money } from "../../types/stores";
+import { Money } from "../../types";
 import { shopService } from "../../store/index";
 export const UserWallet: React.FC = observer((props) => {
   const { user } = useStore();
