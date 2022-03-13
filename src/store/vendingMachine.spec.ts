@@ -2,7 +2,7 @@ import { setupServer } from "msw/node";
 import { VendingMachine, User, Wallet, Products } from "./VendingMachine";
 import { shopActions } from ".";
 import { apiHandlers } from "../api/server";
-import * as mocks from "../api/mocks";
+
 export const server = setupServer(...apiHandlers);
 
 describe("wallet (500 руб.)", () => {
@@ -104,5 +104,65 @@ describe("User", () => {
     user.withdrawMoney(500, 1);
     user.withdrawMoney(1000, 1);
     expect(user.userWallet.total).toEqual(0);
+  });
+});
+
+describe("VendingMachine", () => {
+  test("Расчет сдачи (6 Рублей - 5 рублей + 1 рубль)", () => {
+    const vendingMachine = new VendingMachine();
+    vendingMachine.bulkDepositMoneyToShop(
+      new Map([
+        [1, 50],
+        [2, 50],
+        [5, 50],
+        [10, 50],
+        [50, 50],
+        [100, 50],
+        [200, 50],
+        [500, 50],
+        [1000, 50],
+      ])
+    );
+    expect(vendingMachine.getChange(6).get(5)).toEqual(1);
+    expect(vendingMachine.getChange(6).get(1)).toEqual(1);
+  });
+  test("Расчет сдачи (666 Рублей = 500 рублей + 100 рублей +  50 рублей + 10 рублей + 5 рублей + 1 рубль )", () => {
+    const vendingMachine = new VendingMachine();
+    vendingMachine.bulkDepositMoneyToShop(
+      new Map([
+        [1, 50],
+        [2, 50],
+        [5, 50],
+        [10, 50],
+        [50, 50],
+        [100, 50],
+        [200, 50],
+        [500, 50],
+        [1000, 50],
+      ])
+    );
+    expect(vendingMachine.getChange(666).get(500)).toEqual(1);
+    expect(vendingMachine.getChange(666).get(100)).toEqual(1);
+    expect(vendingMachine.getChange(666).get(50)).toEqual(1);
+    expect(vendingMachine.getChange(666).get(10)).toEqual(1);
+    expect(vendingMachine.getChange(666).get(5)).toEqual(1);
+    expect(vendingMachine.getChange(666).get(1)).toEqual(1);
+  });
+  test("Расчет сдачи (10 000 рублей  = 10 по 1000 рублей)", () => {
+    const vendingMachine = new VendingMachine();
+    vendingMachine.bulkDepositMoneyToShop(
+      new Map([
+        [1, 50],
+        [2, 50],
+        [5, 50],
+        [10, 50],
+        [50, 50],
+        [100, 50],
+        [200, 50],
+        [500, 50],
+        [1000, 50],
+      ])
+    );
+    expect(vendingMachine.getChange(10000).get(1000)).toEqual(10);
   });
 });
