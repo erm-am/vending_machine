@@ -36,7 +36,7 @@ export const ReceiverWallet: React.FC = observer(() => {
       <TotalOrder />
       <TotalReceiverMoney />
 
-      <Action disabled={false} onClick={handleClickRefund}>
+      <Action disabled={vending.totalReceiverMoney === 0} onClick={handleClickRefund}>
         Забрать деньги
       </Action>
 
