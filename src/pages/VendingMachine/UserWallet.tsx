@@ -4,7 +4,7 @@ import { useStore } from "../../hooks/useStore";
 import styled, { css } from "styled-components";
 import { Button } from "../../components/core/Button";
 import { Money } from "../../types";
-import { shopService } from "../../store/index";
+import { shopService } from "../../store/vendingMachine.service";
 export const UserWallet: React.FC = observer((props) => {
   const { user } = useStore();
 

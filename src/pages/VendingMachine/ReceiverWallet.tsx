@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Button } from "../../components/core/Button";
 import { Grid } from "../../components/core/Grid";
 import { Row, Cell } from "../../components/core/Grid/Grid.styled";
-import { shopService } from "../../store/index";
+import { shopService } from "../../store/vendingMachine.service";
 export const ReceiverWallet: React.FC = observer(() => {
   const { vending } = useStore();
   const gridColumns = [

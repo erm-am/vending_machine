@@ -8,31 +8,38 @@ export class Products {
     makeAutoObservable(this);
   }
 
-  hasProduct(productId: number): any {
+  // Наличие конкретного продукта
+  hasProduct(productId: number): boolean {
     return this.products.has(productId);
   }
 
+  // Наличие конкретного продукта в нужном кол-ве
   hasCount(productId: number, count: number): boolean {
     return this.getCount(productId) >= count;
   }
 
+  // Получить кол-во продукта
   getCount(productId: number): number {
     return this.products.get(productId) ?? 0;
   }
 
+  // Добавить продукт в нужном кол-ве
   addProduct(productId: number, count: number) {
     this.products.set(productId, this.getCount(productId) + count);
   }
 
+  // Удалить продукт в нужном кол-ве
   removeProduct(productId: number, count: number) {
     this.products.set(productId, this.getCount(productId) - count);
   }
 
-  setProducts(products: [number, number][]) {
+  // Добавить несколько продуктов в нужном кол-ве
+  addProducts(products: Map<number, number>) {
     this.products = new Map(products);
   }
 
-  clear() {
+  // Удалить все продукты
+  clearProducts() {
     this.products = new Map();
   }
 }
@@ -43,27 +50,32 @@ export class Wallet {
     makeAutoObservable(this);
   }
 
-  getCount(moneyId: Money): number {
-    return this.money.get(moneyId) ?? 0;
-  }
-
+  // Наличие каких-нибудь монет в кошельке
   hasMoney(): boolean {
     return Array.from(this.money).some(([moneyId, count]) => count > 0);
   }
 
+  // Получить кол-во монет конкретного номинала
+  getCount(moneyId: Money): number {
+    return this.money.get(moneyId) ?? 0;
+  }
+
+  // Удалить монеты конкретного номинала
   withdraw(moneyId: Money, count: number) {
     const currentMoneyCount = this.getCount(moneyId);
     const newValue = currentMoneyCount - count;
     this.money.set(moneyId, newValue);
   }
 
+  // Добавить монеты конкретного номинала)
   deposit(moneyId: Money, count: number) {
     const currentMoneyCount = this.getCount(moneyId);
     const newValue = currentMoneyCount + count;
     this.money.set(moneyId, newValue);
   }
 
-  setMoney(money: [Money, number][]) {
+  //Множественное добавление денег
+  bulkAddMoney(money: [Money, number][]) {
     this.money = new Map(money);
   }
 
@@ -97,14 +109,15 @@ export class User {
     return this.userWallet.getCount(moneyId) > 0;
   }
 
-  // положить несколько видов купюр на счет
+  //Положить несколько видов купюр на счет
   bulkDepositMoney(money: MoneyWallet) {
     for (let [moneyId, count] of money) {
       this.depositMoney(moneyId, count);
     }
   }
 
-  bulkDepositProducts(products: Map<number, number>) {
+  // Добавить много продуктов
+  bulkAddProducts(products: Map<number, number>) {
     for (let [id, count] of products) {
       this.userProducts.addProduct(id, count);
     }
@@ -113,8 +126,8 @@ export class User {
   async loadServerData() {
     const [catalogue, userWallet, userProducts] = await Promise.all([api.getCatalogue(), api.getUserWallet(), api.getUserProducts()]);
 
-    this.userProducts.setProducts(userProducts);
-    this.userWallet.setMoney(userWallet);
+    this.userProducts.addProducts(userProducts);
+    this.userWallet.bulkAddMoney(userWallet);
   }
 }
 
@@ -134,7 +147,7 @@ export class VendingMachine {
   }
 
   // Есть ли товар в нужном кол-ве (исключаем зарезервированные)
-  hasAvailableProduct(productId: number, count: number): boolean {
+  hasAvailableProductWithoutReserved(productId: number, count: number): boolean {
     const productCount = this.shopProducts.getCount(productId);
     const reservedProductCount = this.reservedProducts.getCount(productId);
     return productCount - reservedProductCount >= count;
@@ -154,12 +167,12 @@ export class VendingMachine {
   }
 
   // Пополнить монетоприемник
-  depositMoneyToReceiver(moneyId: Money, count: number) {
+  depositMoneyInReceiverWallet(moneyId: Money, count: number) {
     this.receiverWallet.deposit(moneyId, count);
   }
 
   // Забрать все деньги из монетоприемника
-  bulkWithdrawMoneyFromReceiver(): MoneyWallet {
+  withdrawAllMoneyFromReceiverWallet(): MoneyWallet {
     const withdrawedMoney = new Map();
     for (let [moneyId, count] of this.receiverWallet.money) {
       this.receiverWallet.withdraw(moneyId, count);
@@ -172,7 +185,8 @@ export class VendingMachine {
     return withdrawedMoney;
   }
 
-  bulkWithdrawMoneyFromShop(money: MoneyWallet) {
+  // Cнять деньги с магазина
+  withdrawMoneyFromShop(money: MoneyWallet) {
     const withdrawedMoney = new Map();
     for (let [moneyId, count] of money) {
       this.shopWallet.withdraw(moneyId, count);
@@ -185,15 +199,15 @@ export class VendingMachine {
     return withdrawedMoney;
   }
 
-  bulkDepositMoneyToShop(money: MoneyWallet) {
+  depositMoneyInShop(money: MoneyWallet) {
     for (let [moneyId, count] of money) {
       this.shopWallet.deposit(moneyId, count);
     }
   }
 
   transferMoneyFromReceiverToShop() {
-    const withdrawedMoneyFromReceiver = this.bulkWithdrawMoneyFromReceiver();
-    this.bulkDepositMoneyToShop(withdrawedMoneyFromReceiver);
+    const withdrawedMoneyFromReceiver = this.withdrawAllMoneyFromReceiverWallet();
+    this.depositMoneyInShop(withdrawedMoneyFromReceiver);
   }
 
   calculateChangeValue(): number {
@@ -202,6 +216,8 @@ export class VendingMachine {
     const changeForUser = totalReceiverMoney - totalOrder;
     return changeForUser;
   }
+
+  //Расчитать сдачу в монетах
   getChange(changeForUser: number): MoneyWallet {
     const userChange: MoneyWallet = new Map();
     const shopWallet = this.shopWallet.money;
@@ -225,9 +241,9 @@ export class VendingMachine {
     return userChange;
   }
 
-  withdrawProducts() {
+  pickUpProducts() {
     const reservedProducts = this.reservedProducts.products;
-    this.reservedProducts.clear();
+    this.reservedProducts.clearProducts();
     for (let [productId, count] of reservedProducts) {
       this.shopProducts.removeProduct(productId, count);
     }
@@ -242,9 +258,9 @@ export class VendingMachine {
       api.getReceiverWallet(),
     ]);
     this.catalogue = catalogue;
-    this.shopProducts.setProducts(shopProducts);
-    this.shopWallet.setMoney(shopWallet);
-    this.receiverWallet.setMoney(receiverWallet);
+    this.shopProducts.addProducts(shopProducts);
+    this.shopWallet.bulkAddMoney(shopWallet);
+    this.receiverWallet.bulkAddMoney(receiverWallet);
   }
 
   get totalReceiverMoney() {

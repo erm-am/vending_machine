@@ -6,7 +6,7 @@ interface IProductProps {
 }
 
 export const Product: React.FC<IProductProps> = (props) => {
-  const { children, disabled = false } = props;
+  const { children, disabled } = props;
 
   return (
     <ProductContainer disabled={disabled}>

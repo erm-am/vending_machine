@@ -1,42 +1,42 @@
 import { setupServer } from "msw/node";
 import { VendingMachine, User, Wallet, Products } from "./VendingMachine";
-import { shopActions } from ".";
+
 import { apiHandlers } from "../api/server";
 
 export const server = setupServer(...apiHandlers);
 
-describe("wallet (500 руб.)", () => {
+describe("wallet", () => {
   beforeAll(() => server.listen());
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
-  test("Должно быть 500 рублей, если кладем 5 купюр по 100 руб", () => {
+  test("Возможность внесения денег", () => {
     const wallet = new Wallet();
-    wallet.setMoney([[100, 5]]);
+    wallet.bulkAddMoney([[100, 5]]);
     expect(wallet.total).toEqual(500);
     expect(wallet.getCount(100)).toEqual(5);
   });
 
-  test("Должно быть 200 рублей, если снимаем 300", () => {
+  test("Возможность внесения и снятия денег", () => {
     const wallet = new Wallet();
-    wallet.setMoney([[100, 5]]);
+    wallet.bulkAddMoney([[100, 5]]);
     wallet.withdraw(100, 3);
     expect(wallet.total).toEqual(200);
     expect(wallet.getCount(100)).toEqual(2);
   });
 });
 
-describe("products (10 шт.)", () => {
+describe("Products", () => {
   beforeAll(() => server.listen());
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
-  test("Должно быть 10 продуктов c productId 1", () => {
+  test("Возможность добавления продуктов", () => {
     const products = new Products();
     products.addProduct(1, 10);
     expect(products.hasCount(1, 10)).toBeTruthy();
     expect(products.getCount(1)).toEqual(10);
   });
 
-  test("Должно быть 8 продуктов если убрали 2", () => {
+  test("Возможность добавления и удаления продуктов", () => {
     const products = new Products();
     products.addProduct(1, 10);
     products.removeProduct(1, 2);
@@ -48,9 +48,9 @@ describe("User", () => {
   beforeAll(() => server.listen());
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
-  test("Множественное добавление продуктов в корзину пользователя", () => {
+  test("Возможность множественного добавления продуктов", () => {
     const user = new User();
-    user.bulkDepositProducts(
+    user.bulkAddProducts(
       new Map([
         [1, 10],
         [2, 10],
@@ -60,7 +60,7 @@ describe("User", () => {
     expect(user.userProducts.getCount(2)).toEqual(10);
   });
 
-  test("Множественное добавление денег в кошелек пользователя", () => {
+  test("Возможность множественного добавления денег в кошелек пользователя", () => {
     const user = new User();
 
     user.bulkDepositMoney(
@@ -77,7 +77,7 @@ describe("User", () => {
     expect(user.userWallet.getCount(1000)).toEqual(50);
   });
 
-  test("Сумма в кошельке пользователя", () => {
+  test("Подсчет итоговой суммы в кошельке пользователя", () => {
     const user = new User();
     user.bulkDepositMoney(
       new Map([
@@ -89,7 +89,7 @@ describe("User", () => {
     );
     expect(user.userWallet.total).toEqual(1800);
   });
-  test("Снимаем все деньги с кошелька пользователя", () => {
+  test("Возможность множественного снятия денег с кошелька пользователя", () => {
     const user = new User();
     user.bulkDepositMoney(
       new Map([
@@ -108,9 +108,9 @@ describe("User", () => {
 });
 
 describe("VendingMachine", () => {
-  test("Расчет сдачи (6 Рублей - 5 рублей + 1 рубль)", () => {
+  test("Расчет сдачи на основе заданного значения (запрашиваем:6;получаем:5,1)", () => {
     const vendingMachine = new VendingMachine();
-    vendingMachine.bulkDepositMoneyToShop(
+    vendingMachine.depositMoneyInShop(
       new Map([
         [1, 50],
         [2, 50],
@@ -126,9 +126,9 @@ describe("VendingMachine", () => {
     expect(vendingMachine.getChange(6).get(5)).toEqual(1);
     expect(vendingMachine.getChange(6).get(1)).toEqual(1);
   });
-  test("Расчет сдачи (666 Рублей = 500 рублей + 100 рублей +  50 рублей + 10 рублей + 5 рублей + 1 рубль )", () => {
+  test("Расчет сдачи на основе заданного значения (запрашиваем:666;получаем:500,100,50,10,5,1)", () => {
     const vendingMachine = new VendingMachine();
-    vendingMachine.bulkDepositMoneyToShop(
+    vendingMachine.depositMoneyInShop(
       new Map([
         [1, 50],
         [2, 50],
@@ -148,9 +148,9 @@ describe("VendingMachine", () => {
     expect(vendingMachine.getChange(666).get(5)).toEqual(1);
     expect(vendingMachine.getChange(666).get(1)).toEqual(1);
   });
-  test("Расчет сдачи (10 000 рублей  = 10 по 1000 рублей)", () => {
+  test("Расчет сдачи на основе заданного значения (запрашиваем:1;получаем:1)", () => {
     const vendingMachine = new VendingMachine();
-    vendingMachine.bulkDepositMoneyToShop(
+    vendingMachine.depositMoneyInShop(
       new Map([
         [1, 50],
         [2, 50],
@@ -163,6 +163,6 @@ describe("VendingMachine", () => {
         [1000, 50],
       ])
     );
-    expect(vendingMachine.getChange(10000).get(1000)).toEqual(10);
+    expect(vendingMachine.getChange(1).get(1)).toEqual(1);
   });
 });

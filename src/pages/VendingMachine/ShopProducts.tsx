@@ -4,7 +4,7 @@ import { useStore } from "../../hooks/useStore";
 import styled from "styled-components";
 import { Button } from "../../components/core/Button";
 import { Product } from "../../components/Product";
-import { shopService } from "../../store/index";
+import { shopService } from "../../store/vendingMachine.service";
 
 export const ShopProducts: React.FC = observer(() => {
   const { vending } = useStore();
