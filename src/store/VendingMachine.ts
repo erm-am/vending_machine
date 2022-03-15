@@ -186,7 +186,7 @@ export class VendingMachine {
   }
 
   // Cнять деньги с магазина
-  withdrawMoneyFromShop(money: MoneyWallet) {
+  withdrawMoneyFromShopWallet(money: MoneyWallet) {
     const withdrawedMoney = new Map();
     for (let [moneyId, count] of money) {
       this.shopWallet.withdraw(moneyId, count);
@@ -205,7 +205,7 @@ export class VendingMachine {
     }
   }
 
-  transferMoneyFromReceiverToShop() {
+  transferMoneyFromReceiverWalletToShopWallet() {
     const withdrawedMoneyFromReceiver = this.withdrawAllMoneyFromReceiverWallet();
     this.depositMoneyInShop(withdrawedMoneyFromReceiver);
   }

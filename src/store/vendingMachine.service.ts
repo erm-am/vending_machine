@@ -38,9 +38,9 @@ export const shopActions = {
   buy({ user, vending }: { user: User; vending: VendingMachine }) {
     if (vending.canBuy) {
       const totalChangeForUser = vending.calculateChangeValue();
-      vending.transferMoneyFromReceiverToShop();
+      vending.transferMoneyFromReceiverWalletToShopWallet();
       const changeWallet = vending.getChange(totalChangeForUser);
-      const withdrawedMoney = vending.withdrawMoneyFromShop(changeWallet);
+      const withdrawedMoney = vending.withdrawMoneyFromShopWallet(changeWallet);
       user.bulkDepositMoney(withdrawedMoney);
       const reservedProducts = vending.pickUpProducts();
       user.bulkAddProducts(reservedProducts);

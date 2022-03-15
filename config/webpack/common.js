@@ -76,7 +76,7 @@ module.exports = {
       template: `${paths.public}/index.html`,
       filename: "index.html",
       templateParameters: {
-        title: "Project",
+        title: "Vending Machine",
       },
     }),
 
