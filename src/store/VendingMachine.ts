@@ -205,7 +205,7 @@ export class VendingMachine {
     }
   }
 
-  transferMoneyFromReceiverWalletToShopWallet() {
+  transferAllMoneyFromReceiverWalletToShopWallet() {
     const withdrawedMoneyFromReceiver = this.withdrawAllMoneyFromReceiverWallet();
     this.depositMoneyInShop(withdrawedMoneyFromReceiver);
   }
